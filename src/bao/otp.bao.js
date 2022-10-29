@@ -10,7 +10,7 @@ class OtpBao extends Base {
 
   async sendOtp(emailId) {
     try {
-      logger.info("inside sendOtp");
+      logger.info("inside sendOtp", emailId);
       const generateOtp = Math.floor(Math.random() * 9000 + 1000);
       let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -36,6 +36,35 @@ class OtpBao extends Base {
       });
       OtpDao.saveOtpDetails(emailId, generateOtp);
       return "OTP sent Successfully";
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async verifyOtp(emailId, otp) {
+    try {
+      logger.info("inside verifyOtp", emailId, otp);
+      const otpDetails = await OtpDao.findOtpDetails(emailId, otp);
+      if (otpDetails.length > 0) {
+        let otpId;
+        let expiredFlag = true;
+        otpDetails.forEach((element) => {
+          let diff = Math.abs(new Date() - element.createdOn);
+          let minutes = Math.floor(diff / 1000 / 60);
+          logger.info("minutes", minutes);
+          if (minutes <= 5) {
+            otpId = element._id;
+            expiredFlag = false;
+          }
+        });
+        if (expiredFlag) {
+          return "otp has expired";
+        }
+        OtpDao.updateOtpDetails(otpId);
+        return "otp verified successfully";
+      } else {
+        return "invalid otp";
+      }
     } catch (e) {
       throw e;
     }
