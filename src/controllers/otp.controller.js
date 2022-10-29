@@ -13,6 +13,7 @@ module.exports.POST_sendOtp = async (req, res) => {
     let params = await validateSchema(req.body, schemaSendOtp);
     const otpBao = new OtpBao();
     const result = await otpBao.sendOtp(params.emailId);
+    logger.info("result", result);
     return _200(res, result);
   } catch (e) {
     throw _sendGenericError(res, e);
@@ -29,6 +30,7 @@ module.exports.POST_verifyOtp = async (req, res) => {
     let params = await validateSchema(req.body, schemaVerifyOtp);
     const otpBao = new OtpBao();
     const result = await otpBao.verifyOtp(params.emailId, params.otp);
+    logger.info("result", result);
     return _200(res, result);
   } catch (e) {
     throw _sendGenericError(res, e);
