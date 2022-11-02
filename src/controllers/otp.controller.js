@@ -9,7 +9,7 @@ module.exports.POST_sendOtp = async (req, res) => {
     logger.info("inside POST_sendOtp");
     const schemaSendOtp = Joi.object().keys({
       emailId: Joi.string().required(),
-      status: Joi.number().min(0).max(1).required(),
+      status: Joi.number().min(1).max(2).required(),
     });
     let params = await validateSchema(req.body, schemaSendOtp);
     const otpBao = new OtpBao();
@@ -27,7 +27,7 @@ module.exports.POST_verifyOtp = async (req, res) => {
     const schemaVerifyOtp = Joi.object().keys({
       emailId: Joi.string().required(),
       otp: Joi.number().required(),
-      status: Joi.number().min(0).max(1).required(),
+      status: Joi.number().min(1).max(2).required(),
     });
     let params = await validateSchema(req.body, schemaVerifyOtp);
     const otpBao = new OtpBao();
