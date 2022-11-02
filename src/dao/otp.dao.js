@@ -17,9 +17,9 @@ module.exports.saveOtpDetails = async (emailId, otp, status) => {
   }
 };
 
-module.exports.findOtpDetails = async (emailId, otp) => {
+module.exports.findOtpDetails = async (emailId, otp, status) => {
   try {
-    const data = await Otp.find({ emailId, otp, isVerified: false });
+    const data = await Otp.find({ emailId, otp, isVerified: false, status });
     return data;
   } catch (e) {
     throw e;
