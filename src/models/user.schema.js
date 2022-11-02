@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const schema = new mongoose.Schema({
   userId: String,
   emailId: String,
+  isVerified: Boolean,
   passKey: String,
   saltKey: String,
   saltKeyIv: String,

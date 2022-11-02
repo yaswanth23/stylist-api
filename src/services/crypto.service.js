@@ -32,7 +32,6 @@ module.exports.decryptKey = async (saltKey, saltKeyIv, passKey) => {
     decryptedData += decipher.final("utf8");
     return decryptedData;
   } catch (e) {
-    console.log(e);
     throw e;
   }
 };

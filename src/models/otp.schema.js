@@ -4,6 +4,7 @@ const schema = new mongoose.Schema({
   emailId: String,
   otp: Number,
   isVerified: Boolean,
+  status: Number,
   createdOn: Date,
 });
 

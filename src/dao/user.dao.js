@@ -27,3 +27,14 @@ module.exports.findUserEmailId = async (emailId) => {
     throw e;
   }
 };
+
+module.exports.updateOtpDetails = async (emailId) => {
+  try {
+    let whereObj = { emailId };
+    let updateObj = { $set: { isVerified: true } };
+    const data = await User.updateOne(whereObj, updateObj);
+    return data;
+  } catch (e) {
+    throw e;
+  }
+};

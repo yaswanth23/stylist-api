@@ -9,10 +9,11 @@ module.exports.POST_sendOtp = async (req, res) => {
     logger.info("inside POST_sendOtp");
     const schemaSendOtp = Joi.object().keys({
       emailId: Joi.string().required(),
+      status: Joi.number().min(0).max(1).required(),
     });
     let params = await validateSchema(req.body, schemaSendOtp);
     const otpBao = new OtpBao();
-    const result = await otpBao.sendOtp(params.emailId);
+    const result = await otpBao.sendOtp(params.emailId, params.status);
     logger.info("result", result);
     return _200(res, result);
   } catch (e) {
@@ -26,10 +27,15 @@ module.exports.POST_verifyOtp = async (req, res) => {
     const schemaVerifyOtp = Joi.object().keys({
       emailId: Joi.string().required(),
       otp: Joi.number().required(),
+      status: Joi.number().min(0).max(1).required(),
     });
     let params = await validateSchema(req.body, schemaVerifyOtp);
     const otpBao = new OtpBao();
-    const result = await otpBao.verifyOtp(params.emailId, params.otp);
+    const result = await otpBao.verifyOtp(
+      params.emailId,
+      params.otp,
+      params.status
+    );
     logger.info("result", result);
     return _200(res, result);
   } catch (e) {

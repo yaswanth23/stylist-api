@@ -1,11 +1,12 @@
 const { Otp } = require("../models");
 
-module.exports.saveOtpDetails = async (emailId, otp) => {
+module.exports.saveOtpDetails = async (emailId, otp, status) => {
   try {
     const insertObj = {
-      emailId: emailId,
-      otp: otp,
+      emailId,
+      otp,
       isVerified: false,
+      status,
       createdOn: new Date().toISOString(),
     };
     const data = new Otp(insertObj);

@@ -1,7 +1,9 @@
 const Base = require("./base");
 const logger = require("../common/logger")("auth-bao");
 const { v4: uuidv4 } = require("uuid");
-const { UserDao } = require("../dao");
+const nodemailer = require("nodemailer");
+const constants = require("../common/constants");
+const { UserDao, OtpDao } = require("../dao");
 const { CryptoService } = require("../services");
 
 class AuthBao extends Base {
@@ -14,7 +16,17 @@ class AuthBao extends Base {
       logger.info("inside signUp", emailId);
       let findEmailId = await UserDao.findUserEmailId(emailId);
       if (findEmailId.length > 0) {
-        return "user already exists";
+        if (!findEmailId[0].isVerified) {
+          return {
+            statusCode: constants.STATUS_CODES[303],
+            statusMessage: constants.STATUS_MESSAGE[303],
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[301],
+            statusMessage: constants.STATUS_MESSAGE[301],
+          };
+        }
       }
       let userId = -1;
       do {
@@ -24,6 +36,7 @@ class AuthBao extends Base {
       let insertObj = {
         userId,
         emailId,
+        isVerified: false,
         passKey: passKeyDetails.encryptedData,
         saltKey: passKeyDetails.saltKey,
         saltKeyIv: passKeyDetails.saltKeyIv,
@@ -31,7 +44,14 @@ class AuthBao extends Base {
         updatedOn: new Date().toISOString(),
       };
       await UserDao.saveUserDetails(insertObj);
-      return "user registered successfully";
+      const otpRes = await this.sendOtp(emailId);
+      if (otpRes) {
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "OTP sent successfully",
+          status: 1,
+        };
+      }
     } catch (e) {
       throw e;
     }
@@ -42,7 +62,16 @@ class AuthBao extends Base {
       logger.info("inside login", emailId);
       let findEmailId = await UserDao.findUserEmailId(emailId);
       if (findEmailId.length < 1) {
-        return "user not found";
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+      if (!findEmailId[0].isVerified) {
+        return {
+          statusCode: constants.STATUS_CODES[305],
+          statusMessage: constants.STATUS_MESSAGE[305],
+        };
       }
       let decryptedPassword = await CryptoService.decryptKey(
         findEmailId[0].saltKey,
@@ -50,10 +79,52 @@ class AuthBao extends Base {
         findEmailId[0].passKey
       );
       if (password === decryptedPassword) {
-        return "user logged in successfully";
+        return {
+          userId: findEmailId[0].userId,
+          emailId: findEmailId[0].emailId,
+          isVerified: findEmailId[0].isVerified,
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "user logged in successfully",
+        };
       } else {
-        return "incorrect password";
+        return {
+          statusCode: constants.STATUS_CODES[304],
+          statusMessage: constants.STATUS_MESSAGE[304],
+        };
       }
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async sendOtp(emailId) {
+    try {
+      logger.info("inside sendOtp", emailId);
+      const generateOtp = Math.floor(Math.random() * 9000 + 1000);
+      let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_ID,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+      let mailOptions = {
+        from: process.env.EMAIL_ID,
+        to: emailId,
+        subject: "User Account Verification",
+        text: `Hi there, Your OTP for account verification is ${generateOtp}. Valid only for 5 minutes.`,
+      };
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          logger.error(error);
+        } else {
+          logger.info("Mail sent successfully!");
+        }
+      });
+      OtpDao.saveOtpDetails(emailId, generateOtp, 1);
+      return true;
     } catch (e) {
       throw e;
     }

@@ -1,16 +1,16 @@
 const Base = require("./base");
 const nodemailer = require("nodemailer");
 const logger = require("../common/logger")("otp-bao");
-const { OtpDao } = require("../dao");
-
+const { OtpDao, UserDao } = require("../dao");
+const constants = require("../common/constants");
 class OtpBao extends Base {
   constructor() {
     super();
   }
 
-  async sendOtp(emailId) {
+  async sendOtp(emailId, status) {
     try {
-      logger.info("inside sendOtp", emailId);
+      logger.info("inside sendOtp", emailId, status);
       const generateOtp = Math.floor(Math.random() * 9000 + 1000);
       let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -34,17 +34,20 @@ class OtpBao extends Base {
           logger.info("Mail sent successfully!");
         }
       });
-      OtpDao.saveOtpDetails(emailId, generateOtp);
-      return "OTP sent Successfully";
+      OtpDao.saveOtpDetails(emailId, generateOtp, status);
+      return {
+        statusCode: constants.STATUS_CODES[200],
+        statusMessage: "OTP sent successfully",
+      };
     } catch (e) {
       throw e;
     }
   }
 
-  async verifyOtp(emailId, otp) {
+  async verifyOtp(emailId, otp, status) {
     try {
-      logger.info("inside verifyOtp", emailId, otp);
-      const otpDetails = await OtpDao.findOtpDetails(emailId, otp);
+      logger.info("inside verifyOtp", emailId, otp, status);
+      const otpDetails = await OtpDao.findOtpDetails(emailId, otp, status);
       if (otpDetails.length > 0) {
         let otpId;
         let expiredFlag = true;
@@ -58,12 +61,37 @@ class OtpBao extends Base {
           }
         });
         if (expiredFlag) {
-          return "otp has expired";
+          return {
+            statusCode: constants.STATUS_CODES[402],
+            statusMessage: constants.STATUS_MESSAGE[402],
+          };
         }
         OtpDao.updateOtpDetails(otpId);
-        return "otp verified successfully";
+        if (status == 1) {
+          let userDetails = await UserDao.findUserEmailId(emailId);
+          if (userDetails.length > 0) {
+            if (userDetails[0].isVerified) {
+              return {
+                statusCode: constants.STATUS_CODES[200],
+                statusMessage: "user already verified",
+              };
+            }
+          }
+          UserDao.updateOtpDetails(emailId);
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: "user regiestered successfully",
+          };
+        }
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "otp verified successfully",
+        };
       } else {
-        return "invalid otp";
+        return {
+          statusCode: constants.STATUS_CODES[401],
+          statusMessage: constants.STATUS_MESSAGE[401],
+        };
       }
     } catch (e) {
       throw e;
