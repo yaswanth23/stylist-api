@@ -38,6 +38,23 @@ module.exports.POST_login = async (req, res) => {
   }
 };
 
+module.exports.POST_resetPassword = async (req, res) => {
+  try {
+    logger.info("inside POST_resetPassword");
+    const schemaResetPassword = Joi.object().keys({
+      userId: Joi.string().required(),
+      password: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaResetPassword);
+    const authBao = new AuthBao();
+    const result = await authBao.resetPassword(params.userId, params.password);
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

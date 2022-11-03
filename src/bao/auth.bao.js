@@ -130,6 +130,28 @@ class AuthBao extends Base {
     }
   }
 
+  async resetPassword(userId, password) {
+    try {
+      logger.info("inside resetPassword", userId);
+      let userDetails = await UserDao.findUserId(userId);
+      let passKeyDetails = await CryptoService.encryptKey(password);
+      let insertObj = {
+        passKey: passKeyDetails.encryptedData,
+        saltKey: passKeyDetails.saltKey,
+        saltKeyIv: passKeyDetails.saltKeyIv,
+        updatedOn: new Date().toISOString(),
+      };
+      UserDao.updateUserPasswordDetails(insertObj, userId);
+      return {
+        userId: userDetails[0].userId,
+        statusCode: constants.STATUS_CODES[200],
+        statusMessage: "password updated successfully",
+      };
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async generateUserId() {
     let userId = uuidv4();
     let userExist = await UserDao.findUserId(userId);

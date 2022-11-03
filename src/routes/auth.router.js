@@ -6,5 +6,6 @@ router.post("/signUp", AuthController.POST_signUp);
 router.post("/login", AuthController.POST_login);
 router.post("/sendOtp", OtpController.POST_sendOtp);
 router.post("/verifyOtp", OtpController.POST_verifyOtp);
+router.post("/resetPassword", AuthController.POST_resetPassword);
 
 module.exports = router;

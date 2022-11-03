@@ -38,3 +38,14 @@ module.exports.updateOtpDetails = async (emailId) => {
     throw e;
   }
 };
+
+module.exports.updateUserPasswordDetails = async (insertObj, userId) => {
+  try {
+    let whereObj = { userId };
+    let updateObj = { $set: insertObj };
+    const data = await User.updateOne(whereObj, updateObj);
+    return data;
+  } catch (e) {
+    throw e;
+  }
+};
