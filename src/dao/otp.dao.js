@@ -13,6 +13,7 @@ module.exports.saveOtpDetails = async (emailId, otp, status) => {
     data.save();
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };
@@ -22,6 +23,7 @@ module.exports.findOtpDetails = async (emailId, otp, status) => {
     const data = await Otp.find({ emailId, otp, isVerified: false, status });
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };
@@ -33,6 +35,7 @@ module.exports.updateOtpDetails = async (otpId) => {
     const data = await Otp.updateOne(whereObj, updateObj);
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };

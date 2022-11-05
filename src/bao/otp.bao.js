@@ -51,6 +51,7 @@ class OtpBao extends Base {
         statusMessage: "OTP sent successfully",
       };
     } catch (e) {
+      logger.error(e);
       throw e;
     }
   }
@@ -108,6 +109,7 @@ class OtpBao extends Base {
         };
       }
     } catch (e) {
+      logger.error(e);
       throw e;
     }
   }

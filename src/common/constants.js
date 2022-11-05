@@ -10,6 +10,7 @@ module.exports = {
     402: 402,
   },
   STATUS_MESSAGE: {
+    200: "success",
     301: "user already exists",
     302: "user not found",
     303: "OTP has not verified for this user",

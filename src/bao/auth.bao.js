@@ -53,6 +53,7 @@ class AuthBao extends Base {
         };
       }
     } catch (e) {
+      logger.error(e);
       throw e;
     }
   }
@@ -93,6 +94,7 @@ class AuthBao extends Base {
         };
       }
     } catch (e) {
+      logger.error(e);
       throw e;
     }
   }
@@ -126,6 +128,7 @@ class AuthBao extends Base {
       OtpDao.saveOtpDetails(emailId, generateOtp, 1);
       return true;
     } catch (e) {
+      logger.error(e);
       throw e;
     }
   }
@@ -148,6 +151,7 @@ class AuthBao extends Base {
         statusMessage: "password updated successfully",
       };
     } catch (e) {
+      logger.error(e);
       throw e;
     }
   }

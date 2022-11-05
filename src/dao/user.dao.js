@@ -5,6 +5,7 @@ module.exports.findUserId = async (userId) => {
     const data = await User.find({ userId });
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };
@@ -15,6 +16,7 @@ module.exports.saveUserDetails = async (insertObj) => {
     data.save();
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };
@@ -24,6 +26,7 @@ module.exports.findUserEmailId = async (emailId) => {
     const data = await User.find({ emailId });
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };
@@ -35,6 +38,7 @@ module.exports.updateOtpDetails = async (emailId) => {
     const data = await User.updateOne(whereObj, updateObj);
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };
@@ -46,6 +50,7 @@ module.exports.updateUserPasswordDetails = async (insertObj, userId) => {
     const data = await User.updateOne(whereObj, updateObj);
     return data;
   } catch (e) {
+    logger.error(e);
     throw e;
   }
 };
