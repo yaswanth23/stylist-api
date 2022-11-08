@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const schema = new mongoose.Schema({
   userId: String,
   emailId: String,
-  isVerified: Boolean,
-  passKey: String,
-  saltKey: String,
-  saltKeyIv: String,
+  name: String,
+  gender: String,
+  profilePic: String,
+  isProfileCreated: Boolean,
   createdOn: Date,
   updatedOn: Date,
 });

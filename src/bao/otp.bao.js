@@ -22,20 +22,12 @@ class OtpBao extends Base {
         },
       });
       let mailOptions;
-      if (status == 1) {
-        mailOptions = {
-          from: process.env.EMAIL_ID,
-          to: emailId,
-          subject: "User Account Verification",
-          text: `Hi there, Your OTP for account verification is ${generateOtp}. Valid only for 5 minutes.`,
-        };
-      }
       if (status == 2) {
         mailOptions = {
           from: process.env.EMAIL_ID,
           to: emailId,
-          subject: "Forget Password Verification",
-          text: `Hi there, Your OTP for forget password verification is ${generateOtp}. Valid only for 5 minutes.`,
+          subject: "User Account Verification",
+          text: `Hi there, Kindly use the OTP ${generateOtp} for login into your account. Valid only for 5 minutes.`,
         };
       }
       transporter.sendMail(mailOptions, function (error, info) {
@@ -80,27 +72,12 @@ class OtpBao extends Base {
         }
         OtpDao.updateOtpDetails(otpId);
         let userDetails = await UserDao.findUserEmailId(emailId);
-        if (status == 1) {
-          if (userDetails.length > 0) {
-            if (userDetails[0].isVerified) {
-              return {
-                userId: userDetails[0].userId,
-                statusCode: constants.STATUS_CODES[200],
-                statusMessage: "user already verified",
-              };
-            }
-          }
-          UserDao.updateOtpDetails(emailId);
-          return {
-            userId: userDetails[0].userId,
-            statusCode: constants.STATUS_CODES[200],
-            statusMessage: "user regiestered successfully",
-          };
-        }
         return {
-          userId: userDetails[0].userId,
           statusCode: constants.STATUS_CODES[200],
           statusMessage: "otp verified successfully",
+          userId: userDetails[0].userId,
+          emailId: userDetails[0].emailId,
+          isProfileCreated: userDetails[0].isProfileCreated,
         };
       } else {
         return {
