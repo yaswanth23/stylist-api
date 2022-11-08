@@ -7,12 +7,14 @@ defaultRouter.get("/ping", PingController.GET_ping);
 const authRouter = require("./auth.router");
 const userRouter = require("./user.router");
 const picsRouter = require("./pics.router");
+const closetRouter = require("./closet.router");
 
 const init = (app) => {
   app.use("/api", defaultRouter);
   app.use("/api", authRouter);
   app.use("/api", userRouter);
   app.use("/api", picsRouter);
+  app.use("/api", closetRouter);
 };
 
 module.exports = init;
