@@ -30,27 +30,3 @@ module.exports.findUserEmailId = async (emailId) => {
     throw e;
   }
 };
-
-module.exports.updateOtpDetails = async (emailId) => {
-  try {
-    let whereObj = { emailId };
-    let updateObj = { $set: { isVerified: true } };
-    const data = await User.updateOne(whereObj, updateObj);
-    return data;
-  } catch (e) {
-    logger.error(e);
-    throw e;
-  }
-};
-
-module.exports.updateUserPasswordDetails = async (insertObj, userId) => {
-  try {
-    let whereObj = { userId };
-    let updateObj = { $set: insertObj };
-    const data = await User.updateOne(whereObj, updateObj);
-    return data;
-  } catch (e) {
-    logger.error(e);
-    throw e;
-  }
-};
