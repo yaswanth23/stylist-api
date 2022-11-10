@@ -7,7 +7,17 @@ module.exports.GET_getCategories = async (req, res) => {
     logger.info("inside GET_getCategories");
     const closetBao = new ClosetBao();
     const result = await closetBao.getCategories();
-    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
+module.exports.GET_getBrands = async (req, res) => {
+  try {
+    logger.info("inside GET_getBrands");
+    const closetBao = new ClosetBao();
+    const result = await closetBao.getBrands();
     return _200(res, result);
   } catch (e) {
     throw _sendGenericError(res, e);

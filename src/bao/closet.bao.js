@@ -18,6 +18,17 @@ class PicsBao extends Base {
       throw e;
     }
   }
+
+  async getBrands() {
+    try {
+      logger.info("inside getBrands");
+      let result = await ClosetDao.getBrands();
+      return result;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 module.exports = PicsBao;
