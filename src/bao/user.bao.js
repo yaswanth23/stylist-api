@@ -19,7 +19,14 @@ class UserBao extends Base {
           statusMessage: constants.STATUS_MESSAGE[200],
           userId: userDetails[0].userId,
           emailId: userDetails[0].emailId,
-          isVerified: userDetails[0].isVerified,
+          name: userDetails[0].name == undefined ? null : userDetails[0].name,
+          gender:
+            userDetails[0].gender == undefined ? null : userDetails[0].gender,
+          profilePic:
+            userDetails[0].profilePic == undefined
+              ? null
+              : userDetails[0].profilePic,
+          isProfileCreated: userDetails[0].isProfileCreated,
         };
       } else {
         res = {
