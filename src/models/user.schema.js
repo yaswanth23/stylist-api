@@ -5,7 +5,7 @@ const schema = new mongoose.Schema({
   emailId: String,
   name: String,
   gender: String,
-  profilePic: String,
+  profilePicUrl: String,
   isProfileCreated: Boolean,
   createdOn: Date,
   updatedOn: Date,

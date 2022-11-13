@@ -30,3 +30,41 @@ module.exports.findUserEmailId = async (emailId) => {
     throw e;
   }
 };
+
+module.exports.updateUserProfilePic = async (userId, profilePicUrl) => {
+  try {
+    let whereObj = { userId };
+    let updateObj = {
+      $set: {
+        profilePicUrl,
+        isProfileCreated: true,
+        updatedOn: new Date().toISOString(),
+      },
+    };
+    const data = await User.updateOne(whereObj, updateObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
+module.exports.updateUserProfileDetails = async (userId, profileDetails) => {
+  try {
+    let whereObj = { userId };
+    let updateObj = {
+      $set: {
+        emailId: profileDetails.emailId,
+        name: profileDetails.name,
+        gender: profileDetails.gender.toLowerCase(),
+        isProfileCreated: true,
+        updatedOn: new Date().toISOString(),
+      },
+    };
+    const data = await User.updateOne(whereObj, updateObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

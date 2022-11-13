@@ -2,7 +2,8 @@ const Base = require("./base");
 const logger = require("../common/logger")("user-bao");
 const constants = require("../common/constants");
 const { UserDao } = require("../dao");
-
+const fs = require("fs");
+const { S3Service } = require("../services");
 class UserBao extends Base {
   constructor() {
     super();
@@ -22,10 +23,10 @@ class UserBao extends Base {
           name: userDetails[0].name == undefined ? null : userDetails[0].name,
           gender:
             userDetails[0].gender == undefined ? null : userDetails[0].gender,
-          profilePic:
-            userDetails[0].profilePic == undefined
+          profilePicUrl:
+            userDetails[0].profilePicUrl == undefined
               ? null
-              : userDetails[0].profilePic,
+              : userDetails[0].profilePicUrl,
           isProfileCreated: userDetails[0].isProfileCreated,
         };
       } else {
@@ -35,6 +36,46 @@ class UserBao extends Base {
         };
       }
       return res;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async postUserProfile(fileData, userData) {
+    try {
+      logger.info("inside postUserProfile", userData.userId);
+      let userDetails = await UserDao.findUserId(userData.userId);
+      if (userDetails.length > 0) {
+        if (fileData != undefined) {
+          const uploadFileResult = await S3Service.uploadProfilePicToS3(
+            fileData.path,
+            fileData.filename
+          );
+          await UserDao.updateUserProfilePic(
+            userData.userId,
+            uploadFileResult.Location
+          );
+          fs.unlinkSync(fileData.path);
+        }
+        await UserDao.updateUserProfileDetails(userData.userId, userData);
+        const updatedUserProfileData = await UserDao.findUserId(
+          userData.userId
+        );
+        return {
+          userId: updatedUserProfileData[0].userId,
+          emailId: updatedUserProfileData[0].emailId,
+          name: updatedUserProfileData[0].name,
+          gender: updatedUserProfileData[0].gender,
+          profilePicUrl: updatedUserProfileData[0].profilePicUrl,
+          isProfileCreated: updatedUserProfileData[0].isProfileCreated,
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
     } catch (e) {
       logger.error(e);
       throw e;
