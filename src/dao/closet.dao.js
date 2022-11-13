@@ -30,3 +30,13 @@ module.exports.saveClosetDetails = async (insertObj) => {
     throw e;
   }
 };
+
+module.exports.getClosetDetails = async (userId) => {
+  try {
+    const data = await Closet.find({ userId });
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

@@ -87,6 +87,42 @@ class ClosetBao extends Base {
       throw e;
     }
   }
+
+  async getClosetDetails(userId) {
+    try {
+      logger.info("inside getClosetDetails");
+      let userDetails = await UserDao.findUserId(userId);
+      if (userDetails.length > 0) {
+        const closetDetails = await ClosetDao.getClosetDetails(userId);
+        let data = [];
+        closetDetails.map((element) => {
+          let obj = {
+            userId: element.userId,
+            closetItemId: element._id,
+            itemImageUrl: element.itemImageUrl,
+            category: element.category,
+            brand: element.brand,
+            season: element.season,
+            colorCode: element.colorCode,
+          };
+          data.push(obj);
+        });
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data,
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 module.exports = ClosetBao;
