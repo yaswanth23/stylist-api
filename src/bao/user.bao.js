@@ -2,7 +2,6 @@ const Base = require("./base");
 const logger = require("../common/logger")("user-bao");
 const constants = require("../common/constants");
 const { UserDao } = require("../dao");
-const fs = require("fs");
 const { S3Service } = require("../services");
 class UserBao extends Base {
   constructor() {
@@ -42,20 +41,28 @@ class UserBao extends Base {
     }
   }
 
-  async postUserProfile(fileData, userData) {
+  async postUserProfile(userData) {
     try {
       logger.info("inside postUserProfile", userData.userId);
       let userDetails = await UserDao.findUserId(userData.userId);
       if (userDetails.length > 0) {
-        if (fileData != undefined) {
+        if (userData.base64ImgString != null) {
+          let base64Data = userData.base64ImgString.match(
+            /^data:([A-Za-z-+\/]+);base64,(.+)$/
+          );
+          if (base64Data.length !== 3) {
+            return {
+              statusCode: constants.STATUS_CODES[304],
+              statusMessage: constants.STATUS_MESSAGE[304],
+            };
+          }
           const uploadFileResult = await S3Service.uploadProfilePicToS3(
-            fileData
+            base64Data
           );
           await UserDao.updateUserProfilePic(
             userData.userId,
             uploadFileResult.Location
           );
-          fs.unlinkSync(fileData.path);
         }
         await UserDao.updateUserProfileDetails(userData.userId, userData);
         const updatedUserProfileData = await UserDao.findUserId(

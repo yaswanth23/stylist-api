@@ -22,24 +22,20 @@ module.exports.GET_userDetails = async (req, res) => {
 
 module.exports.POST_userProfile = async (req, res) => {
   try {
-    console.log("--->", req);
     logger.info("inside POST_userProfile");
     const schemaVerifyUserProfile = Joi.object().keys({
       userId: Joi.string().required(),
       emailId: Joi.string().required(),
       name: Joi.string().required(),
       gender: Joi.string().required(),
+      base64ImgString: Joi.string().allow(null),
     });
-    let params = await validateSchema(
-      JSON.parse(req.body.profileReq),
-      schemaVerifyUserProfile
-    );
+    let params = await validateSchema(req.body, schemaVerifyUserProfile);
     const userBao = new UserBao();
-    const result = await userBao.postUserProfile(req.file, params);
+    const result = await userBao.postUserProfile(params);
     logger.info("result", result);
     return _200(res, result);
   } catch (e) {
-    console.log("e--->", e);
     throw _sendGenericError(res, e);
   }
 };
