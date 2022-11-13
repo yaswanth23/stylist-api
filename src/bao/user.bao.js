@@ -49,8 +49,7 @@ class UserBao extends Base {
       if (userDetails.length > 0) {
         if (fileData != undefined) {
           const uploadFileResult = await S3Service.uploadProfilePicToS3(
-            fileData.path,
-            fileData.filename
+            fileData
           );
           await UserDao.updateUserProfilePic(
             userData.userId,

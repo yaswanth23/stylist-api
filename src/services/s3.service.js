@@ -8,11 +8,13 @@ const s3 = new AWS.S3({
 
 const BUCKET_NAME = "stylistuserprofilepictures";
 
-module.exports.uploadProfilePicToS3 = async (filePath, fileName) => {
-  const fileContent = fs.readFileSync(filePath);
+module.exports.uploadProfilePicToS3 = async (fileData) => {
+  const fileContent = fs.readFileSync(fileData.path);
   const params = {
     Bucket: BUCKET_NAME,
-    Key: fileName,
+    acl: "public-read",
+    ContentType: fileData.mimetype,
+    Key: fileData.filename,
     Body: fileContent,
   };
   return s3.upload(params).promise();
