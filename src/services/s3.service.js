@@ -13,6 +13,7 @@ module.exports.uploadProfilePicToS3 = async (fileData) => {
   const params = {
     Bucket: BUCKET_NAME,
     acl: "public-read",
+    ContentEncoding: fileData.encoding,
     ContentType: fileData.mimetype,
     Key: fileData.filename,
     Body: fileContent,
