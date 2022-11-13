@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+let upload = multer({ dest: "uploads/" });
 const { UserController } = require("../controllers");
 
 const storage = multer.diskStorage({
@@ -15,7 +16,7 @@ const storage = multer.diskStorage({
     );
   },
 });
-const upload = multer({ storage: storage });
+upload = multer({ storage: storage });
 
 router.get("/getUserDetails", UserController.GET_userDetails);
 router.post(
