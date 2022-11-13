@@ -62,6 +62,8 @@ class UserBao extends Base {
           userData.userId
         );
         return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
           userId: updatedUserProfileData[0].userId,
           emailId: updatedUserProfileData[0].emailId,
           name: updatedUserProfileData[0].name,

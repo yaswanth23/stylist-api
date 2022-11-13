@@ -12,7 +12,11 @@ class PicsBao extends Base {
     try {
       logger.info("inside getCategories");
       let result = await ClosetDao.getCategories();
-      return result;
+      return {
+        statusCode: constants.STATUS_CODES[200],
+        statusMessage: constants.STATUS_MESSAGE[200],
+        data: result,
+      };
     } catch (e) {
       logger.error(e);
       throw e;
@@ -23,7 +27,11 @@ class PicsBao extends Base {
     try {
       logger.info("inside getBrands");
       let result = await ClosetDao.getBrands();
-      return result;
+      return {
+        statusCode: constants.STATUS_CODES[200],
+        statusMessage: constants.STATUS_MESSAGE[200],
+        data: result,
+      };
     } catch (e) {
       logger.error(e);
       throw e;
