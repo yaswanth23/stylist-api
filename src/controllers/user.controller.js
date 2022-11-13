@@ -22,6 +22,7 @@ module.exports.GET_userDetails = async (req, res) => {
 
 module.exports.POST_userProfile = async (req, res) => {
   try {
+    console.log("--->", req);
     logger.info("inside POST_userProfile");
     const schemaVerifyUserProfile = Joi.object().keys({
       userId: Joi.string().required(),
@@ -38,6 +39,7 @@ module.exports.POST_userProfile = async (req, res) => {
     logger.info("result", result);
     return _200(res, result);
   } catch (e) {
+    console.log("e--->", e);
     throw _sendGenericError(res, e);
   }
 };
