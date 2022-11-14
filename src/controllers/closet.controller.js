@@ -32,8 +32,9 @@ module.exports.POST_addToCloset = async (req, res) => {
     const schemaVerifyAddToCloset = Joi.object().keys({
       userId: Joi.string().required(),
       itemImageUrl: Joi.string().required(),
-      category: Joi.string().required(),
-      brand: Joi.string().required(),
+      categoryId: Joi.number().required(),
+      subCategoryId: Joi.number().required(),
+      brandId: Joi.number().required(),
       season: Joi.string().required(),
       colorCode: Joi.string().min(7).max(7).required(),
     });
@@ -56,6 +57,26 @@ module.exports.GET_getClosetDetails = async (req, res) => {
     let params = await validateSchema(req.query, schemaVerifyUserId);
     const closetBao = new ClosetBao();
     const result = await closetBao.getClosetDetails(params.userId);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
+module.exports.POST_removeClosetItem = async (req, res) => {
+  try {
+    logger.info("inside POST_removeClosetItem");
+    const schemaVerifyDetails = Joi.object().keys({
+      userId: Joi.string().required(),
+      closetItemId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyDetails);
+    const closetBao = new ClosetBao();
+    const result = await closetBao.removeClosetItem(
+      params.userId,
+      params.closetItemId
+    );
+    logger.info("result", result);
     return _200(res, result);
   } catch (e) {
     throw _sendGenericError(res, e);

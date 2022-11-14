@@ -40,3 +40,23 @@ module.exports.getClosetDetails = async (userId) => {
     throw e;
   }
 };
+
+module.exports.findClosetId = async (closetId) => {
+  try {
+    const data = await Closet.find({ _id: closetId });
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
+module.exports.deleteClosetItem = async (whereObj) => {
+  try {
+    const data = await Closet.deleteOne(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
