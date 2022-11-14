@@ -83,6 +83,26 @@ module.exports.POST_removeClosetItem = async (req, res) => {
   }
 };
 
+module.exports.POST_getOneClosetDetails = async (req, res) => {
+  try {
+    logger.info("inside POST_getOneClosetDetails");
+    const schemaVerifyDetails = Joi.object().keys({
+      userId: Joi.string().required(),
+      closetItemId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyDetails);
+    const closetBao = new ClosetBao();
+    const result = await closetBao.getOneClosetDetails(
+      params.userId,
+      params.closetItemId
+    );
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

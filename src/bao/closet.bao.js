@@ -219,6 +219,46 @@ class ClosetBao extends Base {
       throw e;
     }
   }
+
+  async getOneClosetDetails(userId, closetId) {
+    try {
+      logger.info("inside getOneClosetDetails");
+      let userDetails = await UserDao.findUserId(userId);
+      if (userDetails.length > 0) {
+        let closetDetails = await ClosetDao.findClosetId(closetId);
+        if (closetDetails.length > 0) {
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            userId: closetDetails[0].userId,
+            closetItemId: closetDetails[0]._id,
+            itemImageUrl: closetDetails[0].itemImageUrl,
+            categoryId: closetDetails[0].categoryId,
+            categoryName: closetDetails[0].categoryName,
+            subCategoryId: closetDetails[0].subCategoryId,
+            subCategoryName: closetDetails[0].subCategoryName,
+            brandId: closetDetails[0].brandId,
+            brandName: closetDetails[0].brandName,
+            season: closetDetails[0].season,
+            colorCode: closetDetails[0].colorCode,
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[308],
+            statusMessage: constants.STATUS_MESSAGE[308],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 module.exports = ClosetBao;
