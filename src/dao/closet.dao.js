@@ -80,3 +80,13 @@ module.exports.findByCategoryId = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.updateClosetDetails = async (whereObj, updateObj) => {
+  try {
+    const data = await Closet.updateOne(whereObj, updateObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

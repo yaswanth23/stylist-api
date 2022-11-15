@@ -123,6 +123,29 @@ module.exports.POST_filterCloset = async (req, res) => {
   }
 };
 
+module.exports.POST_editClosetDetails = async (req, res) => {
+  try {
+    logger.info("inside POST_editClosetDetails");
+    const schemaVerifyEditClosetData = Joi.object().keys({
+      userId: Joi.string().required(),
+      closetItemId: Joi.string().required(),
+      itemImageUrl: Joi.string().required(),
+      categoryId: Joi.number().required(),
+      subCategoryId: Joi.number().required(),
+      brandId: Joi.number().required(),
+      season: Joi.string().required(),
+      colorCode: Joi.string().min(7).max(7).required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyEditClosetData);
+    const closetBao = new ClosetBao();
+    const result = await closetBao.editClosetDetails(params);
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,
