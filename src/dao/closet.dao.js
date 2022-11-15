@@ -60,3 +60,13 @@ module.exports.deleteClosetItem = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.deleteClosetItems = async (whereObj) => {
+  try {
+    const data = await Closet.deleteMany(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

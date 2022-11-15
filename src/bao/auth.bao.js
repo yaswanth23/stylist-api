@@ -3,7 +3,7 @@ const logger = require("../common/logger")("auth-bao");
 const { v4: uuidv4 } = require("uuid");
 const nodemailer = require("nodemailer");
 const constants = require("../common/constants");
-const { UserDao, OtpDao } = require("../dao");
+const { UserDao, OtpDao, ClosetDao } = require("../dao");
 
 class AuthBao extends Base {
   constructor() {
@@ -98,6 +98,32 @@ class AuthBao extends Base {
       });
       OtpDao.saveOtpDetails(emailId, generateOtp, status);
       return true;
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async deleteAccount(userId) {
+    try {
+      logger.info("inside deleteAccount", userId);
+      let userDetails = await UserDao.findUserId(userId);
+      if (userDetails.length > 0) {
+        let whereObj = {
+          userId,
+        };
+        await UserDao.deleteUserAccount(whereObj);
+        await ClosetDao.deleteClosetItems(whereObj);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "User account deleted successfully",
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
     } catch (e) {
       logger.error(e);
       throw e;

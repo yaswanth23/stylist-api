@@ -21,6 +21,22 @@ module.exports.POST_login = async (req, res) => {
   }
 };
 
+module.exports.POST_deleteAccount = async (req, res) => {
+  try {
+    logger.info("inside POST_deleteAccount");
+    const schemaVerifyUserId = Joi.object().keys({
+      userId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyUserId);
+    const authBao = new AuthBao();
+    const result = await authBao.deleteAccount(params.userId);
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

@@ -68,3 +68,13 @@ module.exports.updateUserProfileDetails = async (userId, profileDetails) => {
     throw e;
   }
 };
+
+module.exports.deleteUserAccount = async (whereObj) => {
+  try {
+    const data = await User.deleteMany(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
