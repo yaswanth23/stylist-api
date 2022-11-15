@@ -259,6 +259,70 @@ class ClosetBao extends Base {
       throw e;
     }
   }
+
+  async filterCloset(params) {
+    try {
+      logger.info("inside filterCloset");
+      let userDetails = await UserDao.findUserId(params.userId);
+      if (userDetails.length > 0) {
+        let categoryIds = params.categoryIds;
+        let subCategoryIds = params.subCategoryIds;
+        let brandIds = params.brandIds;
+        let seasons = params.seasons.map(function (x) {
+          return x.toLowerCase();
+        });
+        let colorCodes = params.colorCodes.map(function (x) {
+          return x.toLowerCase();
+        });
+
+        let filterData = [];
+        let whereObj = {
+          userId: params.userId,
+          categoryId: categoryIds.length > 0 ? { $in: categoryIds } : "",
+          subCategoryId:
+            subCategoryIds.length > 0 ? { $in: subCategoryIds } : "",
+          brandId: brandIds.length > 0 ? { $in: brandIds } : "",
+          season: seasons.length > 0 ? { $in: seasons } : "",
+          colorCode: colorCodes.length > 0 ? { $in: colorCodes } : "",
+        };
+        let finalObj = JSON.parse(JSON.stringify(whereObj), (key, value) =>
+          value === null || value === "" ? undefined : value
+        );
+
+        let data = await ClosetDao.findByCategoryId(finalObj);
+        data.map((element) => {
+          let obj = {
+            userId: element.userId,
+            closetItemId: element._id,
+            itemImageUrl: element.itemImageUrl,
+            categoryId: element.categoryId,
+            categoryName: element.categoryName,
+            subCategoryId: element.subCategoryId,
+            subCategoryName: element.subCategoryName,
+            brandId: element.brandId,
+            brandName: element.brandName,
+            season: element.season,
+            colorCode: element.colorCode,
+          };
+          filterData.push(obj);
+        });
+        console.log("filterData length", filterData.length);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          filterData,
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 module.exports = ClosetBao;

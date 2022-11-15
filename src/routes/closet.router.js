@@ -8,5 +8,6 @@ router.post("/addToCloset", ClosetController.POST_addToCloset);
 router.get("/getClosetDetails", ClosetController.GET_getClosetDetails);
 router.post("/getOneClosetDetails", ClosetController.POST_getOneClosetDetails);
 router.post("/removeClosetItem", ClosetController.POST_removeClosetItem);
+router.post("/filterCloset", ClosetController.POST_filterCloset);
 
 module.exports = router;

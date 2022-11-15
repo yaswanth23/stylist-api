@@ -70,3 +70,13 @@ module.exports.deleteClosetItems = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.findByCategoryId = async (whereObj) => {
+  try {
+    const data = await Closet.find(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

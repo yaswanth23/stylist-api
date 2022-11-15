@@ -103,6 +103,26 @@ module.exports.POST_getOneClosetDetails = async (req, res) => {
   }
 };
 
+module.exports.POST_filterCloset = async (req, res) => {
+  try {
+    logger.info("inside POST_filterCloset");
+    const schemaVerifyFilters = Joi.object().keys({
+      userId: Joi.string().required(),
+      categoryIds: Joi.array().items(Joi.number().optional()),
+      subCategoryIds: Joi.array().items(Joi.number().optional()),
+      brandIds: Joi.array().items(Joi.number().optional()),
+      seasons: Joi.array().items(Joi.string().optional()),
+      colorCodes: Joi.array().items(Joi.string().optional()),
+    });
+    let params = await validateSchema(req.body, schemaVerifyFilters);
+    const closetBao = new ClosetBao();
+    const result = await closetBao.filterCloset(params);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,
