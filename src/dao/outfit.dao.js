@@ -1,0 +1,22 @@
+const { Outfit } = require("../models");
+
+module.exports.saveOutfitDetails = async (insertObj) => {
+  try {
+    const data = new Outfit(insertObj);
+    data.save();
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
+module.exports.findSameOutfits = async (whereObj) => {
+  try {
+    const data = await Outfit.find(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

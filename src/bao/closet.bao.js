@@ -1,7 +1,7 @@
 const Base = require("./base");
 const logger = require("../common/logger")("closet-bao");
 const constants = require("../common/constants");
-const { ClosetDao, UserDao } = require("../dao");
+const { ClosetDao, UserDao, OutfitDao } = require("../dao");
 const { S3Service } = require("../services");
 class ClosetBao extends Base {
   constructor() {
@@ -473,6 +473,81 @@ class ClosetBao extends Base {
           return {
             statusCode: constants.STATUS_CODES[308],
             statusMessage: constants.STATUS_MESSAGE[308],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      console.log(e);
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async createOutfit(outfitData) {
+    try {
+      logger.info("inside createOutfit");
+      let userDetails = await UserDao.findUserId(outfitData.userId);
+      if (userDetails.length > 0) {
+        if (outfitData.closetItemIds.length > 1) {
+          let finalData = [];
+          let whereObj = {
+            userId: outfitData.userId,
+            _id: { $in: outfitData.closetItemIds },
+          };
+          let closetDetails = await ClosetDao.findClosetDetails(whereObj);
+          if (closetDetails.length > 0) {
+            closetDetails.map((element) => {
+              let obj = {
+                userId: element.userId,
+                closetItemId: element._id,
+                itemImageUrl: element.itemImageUrl,
+                categoryId: element.categoryId,
+                categoryName: element.categoryName,
+                subCategoryId: element.subCategoryId,
+                subCategoryName: element.subCategoryName,
+                brandId: element.brandId,
+                brandName: element.brandName,
+                season: element.season,
+                colorCode: element.colorCode,
+              };
+              finalData.push(obj);
+            });
+          } else {
+            return {
+              statusCode: constants.STATUS_CODES[311],
+              statusMessage: constants.STATUS_MESSAGE[311],
+            };
+          }
+
+          let insertObj = {
+            userId: outfitData.userId,
+            closetItemIds: outfitData.closetItemIds,
+          };
+          let existingMatch = await OutfitDao.findSameOutfits(insertObj);
+          if (existingMatch.length > 0) {
+            return {
+              statusCode: constants.STATUS_CODES[310],
+              statusMessage: constants.STATUS_MESSAGE[310],
+            };
+          }
+          let outfitDetails = await OutfitDao.saveOutfitDetails(insertObj);
+
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            userId: outfitData.userId,
+            outfitId: outfitDetails._id,
+            finalData,
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[309],
+            statusMessage: constants.STATUS_MESSAGE[309],
           };
         }
       } else {

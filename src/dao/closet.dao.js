@@ -90,3 +90,13 @@ module.exports.updateClosetDetails = async (whereObj, updateObj) => {
     throw e;
   }
 };
+
+module.exports.findClosetDetails = async (whereObj) => {
+  try {
+    const data = await Closet.find(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
