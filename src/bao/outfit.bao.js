@@ -77,7 +77,6 @@ class OutfitBao extends Base {
         };
       }
     } catch (e) {
-      console.log(e);
       logger.error(e);
       throw e;
     }
@@ -112,7 +111,72 @@ class OutfitBao extends Base {
         };
       }
     } catch (e) {
-      console.log(e);
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async findOutfitList(userId, closetItemId) {
+    try {
+      logger.info("inside findOutfitList");
+      let userDetails = await UserDao.findUserId(userId);
+      if (userDetails.length > 0) {
+        let closetDetails = await ClosetDao.findClosetId(closetItemId);
+        if (closetDetails.length > 0) {
+          let whereObj = {
+            userId,
+            closetItemIds: { $all: [closetItemId] },
+          };
+          let outfitDetails = await OutfitDao.findSameOutfits(whereObj);
+          let finalOutfitDetails = [];
+          await Promise.all(
+            outfitDetails.map(async (element) => {
+              let closetDetailsList = [];
+              await Promise.all(
+                element.closetItemIds.map(async (element) => {
+                  let closetDetails = await ClosetDao.findClosetId(element);
+                  let obj = {
+                    userId: closetDetails[0].userId,
+                    closetItemId: closetDetails[0]._id,
+                    itemImageUrl: closetDetails[0].itemImageUrl,
+                    categoryId: closetDetails[0].categoryId,
+                    categoryName: closetDetails[0].categoryName,
+                    subCategoryId: closetDetails[0].subCategoryId,
+                    subCategoryName: closetDetails[0].subCategoryName,
+                    brandId: closetDetails[0].brandId,
+                    brandName: closetDetails[0].brandName,
+                    season: closetDetails[0].season,
+                    colorCode: closetDetails[0].colorCode,
+                  };
+                  closetDetailsList.push(obj);
+                })
+              );
+              let obj = {
+                outfitId: element._id,
+                userId: element.userId,
+                closetDetailsList,
+              };
+              finalOutfitDetails.push(obj);
+            })
+          );
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            outfitList: finalOutfitDetails,
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[308],
+            statusMessage: constants.STATUS_MESSAGE[308],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
       logger.error(e);
       throw e;
     }

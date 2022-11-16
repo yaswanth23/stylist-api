@@ -40,6 +40,25 @@ module.exports.POST_removeOutfitItem = async (req, res) => {
   }
 };
 
+module.exports.POST_findOutfitList = async (req, res) => {
+  try {
+    logger.info("inside POST_removeOutfitItem");
+    const schemaVerifyDetails = Joi.object().keys({
+      userId: Joi.string().required(),
+      closetItemId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyDetails);
+    const outfitBao = new OutfitBao();
+    const result = await outfitBao.findOutfitList(
+      params.userId,
+      params.closetItemId
+    );
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,
