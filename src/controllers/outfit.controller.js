@@ -59,6 +59,21 @@ module.exports.POST_findOutfitList = async (req, res) => {
   }
 };
 
+module.exports.GET_getOutfitDetails = async (req, res) => {
+  try {
+    logger.info("inside GET_getOutfitDetails");
+    const schemaVerifyUserId = Joi.object().keys({
+      userId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.query, schemaVerifyUserId);
+    const outfitBao = new OutfitBao();
+    const result = await outfitBao.getOutfitDetails(params.userId);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

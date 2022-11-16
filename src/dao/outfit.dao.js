@@ -30,3 +30,13 @@ module.exports.deleteOutfitItem = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.findOutfitByUserId = async (userId) => {
+  try {
+    const data = await Outfit.find({ userId });
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
