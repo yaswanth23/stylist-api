@@ -20,3 +20,13 @@ module.exports.findSameOutfits = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.deleteOutfitItem = async (whereObj) => {
+  try {
+    const data = await Outfit.deleteOne(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

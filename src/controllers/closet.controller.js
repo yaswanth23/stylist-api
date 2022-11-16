@@ -146,22 +146,6 @@ module.exports.POST_editClosetDetails = async (req, res) => {
   }
 };
 
-module.exports.POST_createOutfit = async (req, res) => {
-  try {
-    logger.info("inside POST_createOutfit");
-    const schemaVerifyCreateOutfit = Joi.object().keys({
-      userId: Joi.string().required(),
-      closetItemIds: Joi.array().required(),
-    });
-    let params = await validateSchema(req.body, schemaVerifyCreateOutfit);
-    const closetBao = new ClosetBao();
-    const result = await closetBao.createOutfit(params);
-    return _200(res, result);
-  } catch (e) {
-    throw _sendGenericError(res, e);
-  }
-};
-
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

@@ -10,6 +10,5 @@ router.post("/getOneClosetDetails", ClosetController.POST_getOneClosetDetails);
 router.post("/removeClosetItem", ClosetController.POST_removeClosetItem);
 router.post("/filterCloset", ClosetController.POST_filterCloset);
 router.post("/editClosetDetails", ClosetController.POST_editClosetDetails);
-router.post("/createOutfit", ClosetController.POST_createOutfit);
 
 module.exports = router;
