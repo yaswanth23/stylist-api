@@ -46,7 +46,7 @@ class ClosetBao extends Base {
         let base64Data = closetData.itemImageUrl.match(
           /^data:([A-Za-z-+\/]+);base64,(.+)$/
         );
-        if (base64Data.length !== 3) {
+        if (base64Data.length !== 3 || base64Data == null) {
           return {
             statusCode: constants.STATUS_CODES[304],
             statusMessage: constants.STATUS_MESSAGE[304],
@@ -141,6 +141,7 @@ class ClosetBao extends Base {
         };
       }
     } catch (e) {
+      console.log(e);
       logger.error(e);
       throw e;
     }
