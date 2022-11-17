@@ -198,6 +198,7 @@ class ClosetBao extends Base {
             _id: closetId,
           };
           await ClosetDao.deleteClosetItem(whereObj);
+          await OutfitDao.removeClosetItems(whereObj);
           return {
             statusCode: constants.STATUS_CODES[200],
             statusMessage: "item deleted successfully",

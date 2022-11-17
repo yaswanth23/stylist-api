@@ -40,3 +40,20 @@ module.exports.findOutfitByUserId = async (userId) => {
     throw e;
   }
 };
+
+module.exports.removeClosetItems = async (obj) => {
+  try {
+    const data = await Outfit.update(
+      { userId: obj.userId },
+      {
+        $pull: {
+          closetItemIds: obj._id,
+        },
+      }
+    );
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
