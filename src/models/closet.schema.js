@@ -10,7 +10,7 @@ const schema = new mongoose.Schema({
   brandId: Number,
   brandName: String,
   season: String,
-  colorCode: String,
+  colorCode: [String],
   createdOn: Date,
 });
 

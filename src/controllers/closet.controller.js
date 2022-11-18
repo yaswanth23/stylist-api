@@ -36,7 +36,7 @@ module.exports.POST_addToCloset = async (req, res) => {
       subCategoryId: Joi.number().required(),
       brandId: Joi.number().required(),
       season: Joi.string().required(),
-      colorCode: Joi.string().min(7).max(7).required(),
+      colorCode: Joi.array().items(Joi.string().min(7).max(7).required()),
     });
     let params = await validateSchema(req.body, schemaVerifyAddToCloset);
     const closetBao = new ClosetBao();
@@ -134,7 +134,7 @@ module.exports.POST_editClosetDetails = async (req, res) => {
       subCategoryId: Joi.number().required(),
       brandId: Joi.number().required(),
       season: Joi.string().required(),
-      colorCode: Joi.string().min(7).max(7).required(),
+      colorCode: Joi.array().items(Joi.string().min(7).max(7).required()),
     });
     let params = await validateSchema(req.body, schemaVerifyEditClosetData);
     const closetBao = new ClosetBao();

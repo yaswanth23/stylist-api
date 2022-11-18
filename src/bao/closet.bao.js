@@ -114,7 +114,9 @@ class ClosetBao extends Base {
           brandId: closetData.brandId,
           brandName,
           season: closetData.season.toLowerCase(),
-          colorCode: closetData.colorCode.toLowerCase(),
+          colorCode: closetData.colorCode.map(function (x) {
+            return x.toLowerCase();
+          }),
           createdOn: new Date().toISOString(),
         };
         const savedDetails = await ClosetDao.saveClosetDetails(insertObj);
@@ -285,29 +287,52 @@ class ClosetBao extends Base {
             subCategoryIds.length > 0 ? { $in: subCategoryIds } : "",
           brandId: brandIds.length > 0 ? { $in: brandIds } : "",
           season: seasons.length > 0 ? { $in: seasons } : "",
-          colorCode: colorCodes.length > 0 ? { $in: colorCodes } : "",
         };
         let finalObj = JSON.parse(JSON.stringify(whereObj), (key, value) =>
           value === null || value === "" ? undefined : value
         );
 
         let data = await ClosetDao.findByCategoryId(finalObj);
-        data.map((element) => {
-          let obj = {
-            userId: element.userId,
-            closetItemId: element._id,
-            itemImageUrl: element.itemImageUrl,
-            categoryId: element.categoryId,
-            categoryName: element.categoryName,
-            subCategoryId: element.subCategoryId,
-            subCategoryName: element.subCategoryName,
-            brandId: element.brandId,
-            brandName: element.brandName,
-            season: element.season,
-            colorCode: element.colorCode,
-          };
-          filterData.push(obj);
-        });
+        if (colorCodes.length > 0) {
+          data.map((element) => {
+            let matchingColorCodes = colorCodes.filter(
+              (e) => element.colorCode.indexOf(e) !== -1
+            );
+            if (matchingColorCodes.length > 0) {
+              let obj = {
+                userId: element.userId,
+                closetItemId: element._id,
+                itemImageUrl: element.itemImageUrl,
+                categoryId: element.categoryId,
+                categoryName: element.categoryName,
+                subCategoryId: element.subCategoryId,
+                subCategoryName: element.subCategoryName,
+                brandId: element.brandId,
+                brandName: element.brandName,
+                season: element.season,
+                colorCode: element.colorCode,
+              };
+              filterData.push(obj);
+            }
+          });
+        } else {
+          data.map((element) => {
+            let obj = {
+              userId: element.userId,
+              closetItemId: element._id,
+              itemImageUrl: element.itemImageUrl,
+              categoryId: element.categoryId,
+              categoryName: element.categoryName,
+              subCategoryId: element.subCategoryId,
+              subCategoryName: element.subCategoryName,
+              brandId: element.brandId,
+              brandName: element.brandName,
+              season: element.season,
+              colorCode: element.colorCode,
+            };
+            filterData.push(obj);
+          });
+        }
         console.log("filterData length", filterData.length);
         return {
           statusCode: constants.STATUS_CODES[200],
@@ -420,15 +445,17 @@ class ClosetBao extends Base {
             await ClosetDao.updateClosetDetails(whereObj, updateObj);
           }
 
-          if (
-            String(closetData.colorCode.toLowerCase()).valueOf() !=
-            String(closetDetails.colorCode).valueOf
-          ) {
-            updateObj = {
-              colorCode: closetData.colorCode.toLowerCase(),
-            };
-            await ClosetDao.updateClosetDetails(whereObj, updateObj);
-          }
+          // if (
+          //   String(closetData.colorCode.toLowerCase()).valueOf() !=
+          //   String(closetDetails.colorCode).valueOf
+          // ) {
+          updateObj = {
+            colorCode: closetData.colorCode.map(function (x) {
+              return x.toLowerCase();
+            }),
+          };
+          await ClosetDao.updateClosetDetails(whereObj, updateObj);
+          // }
 
           let urlFlag =
             String(closetData.itemImageUrl).valueOf() !=
