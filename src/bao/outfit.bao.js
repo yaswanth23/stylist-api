@@ -300,6 +300,11 @@ class OutfitBao extends Base {
                 outfitId: element._id,
                 userId: element.userId,
                 closetDetailsList,
+                outfitImageType: element.outfitImageType,
+                name: element.name,
+                description: element.description,
+                seasons: element.seasons,
+                imageData: element.imageData,
               };
               finalOutfitDetails.push(obj);
             })
