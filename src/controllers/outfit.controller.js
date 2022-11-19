@@ -1,6 +1,6 @@
 const { _200, _error } = require("../common/httpHelper");
 const Joi = require("joi");
-const logger = require("../common/logger")("closet-controller");
+const logger = require("../common/logger")("outfit-controller");
 const { validateSchema } = require("../common/validator");
 const { OutfitBao } = require("../bao");
 

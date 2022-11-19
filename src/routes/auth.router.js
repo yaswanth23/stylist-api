@@ -5,6 +5,7 @@ const { OtpController, AuthController } = require("../controllers");
 
 router.post("/login", AuthController.POST_login);
 router.post("/sendOtp", OtpController.POST_sendOtp);
+router.post("/googleLogin", AuthController.POST_googleLogin);
 router.post("/verifyOtp", OtpController.POST_verifyOtp);
 router.post("/deleteAccount", AuthController.POST_deleteAccount);
 router.get("/terms_and_conditions", function (req, res) {

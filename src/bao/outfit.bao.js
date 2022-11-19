@@ -75,6 +75,7 @@ class OutfitBao extends Base {
             outfitId: outfitDetails._id,
             finalData,
             imageData: outfitDetails.imageData,
+            outfitImageType: outfitDetails.outfitImageType,
           };
         } else {
           return {
@@ -89,6 +90,7 @@ class OutfitBao extends Base {
         };
       }
     } catch (e) {
+      console.log(e);
       logger.error(e);
       throw e;
     }

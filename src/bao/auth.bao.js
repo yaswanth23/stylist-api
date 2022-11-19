@@ -2,6 +2,8 @@ const Base = require("./base");
 const logger = require("../common/logger")("auth-bao");
 const { v4: uuidv4 } = require("uuid");
 const nodemailer = require("nodemailer");
+const { auth } = require("google-auth-library");
+const client = auth.fromAPIKey(process.env.GOOGLE_SIGN_IN_CLIENT_ID);
 const constants = require("../common/constants");
 const { UserDao, OtpDao, ClosetDao } = require("../dao");
 
@@ -127,6 +129,68 @@ class AuthBao extends Base {
     } catch (e) {
       logger.error(e);
       throw e;
+    }
+  }
+
+  async googleLogin(idToken) {
+    try {
+      logger.info("inside googleLogin");
+      let res = await client.verifyIdToken({ idToken });
+      const { email, name, picture, sub: googleid } = res.getPayload();
+      const user = { email, name, picture, googleid };
+      let findEmailId = await UserDao.findUserEmailId(user.email.toLowerCase());
+
+      if (findEmailId.length > 0) {
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          userId: findEmailId[0].userId,
+          emailId: findEmailId[0].emailId,
+          name: findEmailId[0].name == undefined ? null : findEmailId[0].name,
+          gender:
+            findEmailId[0].gender == undefined ? null : findEmailId[0].gender,
+          profilePicUrl:
+            findEmailId[0].profilePicUrl == undefined
+              ? null
+              : findEmailId[0].profilePicUrl,
+          isProfileCreated: findEmailId[0].isProfileCreated,
+        };
+      } else {
+        let userId = -1;
+        do {
+          userId = await this.generateUserId();
+        } while (userId == null);
+        let insertObj = {
+          userId,
+          emailId: user.email,
+          name: user.name,
+          gender: null,
+          profilePicUrl: user.picture,
+          isProfileCreated: true,
+          createdOn: new Date().toISOString(),
+          updatedOn: new Date().toISOString(),
+        };
+        let userDetails = await UserDao.saveUserDetails(insertObj);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          userId: userDetails.userId,
+          emailId: userDetails.emailId,
+          name: userDetails.name == undefined ? null : userDetails.name,
+          gender:
+            userDetails.gender == undefined || userDetails.gender == null
+              ? null
+              : userDetails.gender,
+          profilePicUrl:
+            userDetails.profilePicUrl == undefined
+              ? null
+              : userDetails.profilePicUrl,
+          isProfileCreated: userDetails.isProfileCreated,
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw "failed to retrieve the user from google";
     }
   }
 

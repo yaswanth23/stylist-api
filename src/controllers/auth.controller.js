@@ -37,6 +37,18 @@ module.exports.POST_deleteAccount = async (req, res) => {
   }
 };
 
+module.exports.POST_googleLogin = async (req, res) => {
+  logger.info("inside POST_googleLogin");
+  const schemaVerifyDetails = Joi.object().keys({
+    idToken: Joi.string().required(),
+  });
+  let params = await validateSchema(req.body, schemaVerifyDetails);
+  const authBao = new AuthBao();
+  const result = await authBao.googleLogin(params.idToken);
+  logger.info("result", result);
+  return _200(res, result);
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

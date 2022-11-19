@@ -18,6 +18,7 @@
     "express-http-context": "^1.2.4",
     "express-mung": "^0.5.1",
     "form-data": "^4.0.0",
+    "google-auth-library": "^8.7.0",
     "helmet": "^6.0.0",
     "http": "^0.0.1-security",
     "joi": "^17.6.4",
