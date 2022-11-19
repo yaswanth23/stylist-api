@@ -10,12 +10,26 @@ module.exports.POST_createOutfit = async (req, res) => {
     const schemaVerifyCreateOutfit = Joi.object().keys({
       userId: Joi.string().required(),
       closetItemIds: Joi.array().required(),
+      outfitImageType: Joi.string().required(),
+      name: Joi.string().required(),
+      description: Joi.string().required(),
+      seasons: Joi.array().required(),
+      imageData: Joi.array()
+        .items(
+          Joi.object().keys({
+            pan: Joi.object().required(),
+            imageSrc: Joi.string().required(),
+            closetItemId: Joi.string().required(),
+          })
+        )
+        .required(),
     });
     let params = await validateSchema(req.body, schemaVerifyCreateOutfit);
     const outfitBao = new OutfitBao();
     const result = await outfitBao.createOutfit(params);
     return _200(res, result);
   } catch (e) {
+    console.log(e);
     throw _sendGenericError(res, e);
   }
 };

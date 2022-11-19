@@ -58,6 +58,11 @@ class OutfitBao extends Base {
           insertObj = {
             userId: outfitData.userId,
             closetItemIds: outfitData.closetItemIds,
+            outfitImageType: outfitData.outfitImageType,
+            name: outfitData.name,
+            description: outfitData.description,
+            seasons: outfitData.seasons,
+            imageData: outfitData.imageData,
             createdOn: new Date().toISOString(),
             updatedOn: new Date().toISOString(),
           };
@@ -69,6 +74,7 @@ class OutfitBao extends Base {
             userId: outfitData.userId,
             outfitId: outfitDetails._id,
             finalData,
+            imageData: outfitDetails.imageData,
           };
         } else {
           return {
