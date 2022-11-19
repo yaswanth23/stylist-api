@@ -202,7 +202,6 @@ class OutfitBao extends Base {
       let userDetails = await UserDao.findUserId(userId);
       if (userDetails.length > 0) {
         let outfitDetails = await OutfitDao.findOutfitByUserId(userId);
-        console.log("-->", outfitDetails);
         if (outfitDetails.length > 0) {
           let finalOutfitDetails = [];
           await Promise.all(
