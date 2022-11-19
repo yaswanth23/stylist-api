@@ -55,6 +55,12 @@ class OutfitBao extends Base {
               statusMessage: constants.STATUS_MESSAGE[310],
             };
           }
+          insertObj = {
+            userId: outfitData.userId,
+            closetItemIds: outfitData.closetItemIds,
+            createdOn: new Date().toISOString(),
+            updatedOn: new Date().toISOString(),
+          };
           let outfitDetails = await OutfitDao.saveOutfitDetails(insertObj);
 
           return {

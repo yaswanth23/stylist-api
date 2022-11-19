@@ -12,6 +12,7 @@ const schema = new mongoose.Schema({
   season: String,
   colorCode: [String],
   createdOn: Date,
+  updatedOn: Date,
 });
 
 const Closet = new mongoose.model("closet", schema);

@@ -118,6 +118,7 @@ class ClosetBao extends Base {
             return x.toLowerCase();
           }),
           createdOn: new Date().toISOString(),
+          updatedOn: new Date().toISOString(),
         };
         const savedDetails = await ClosetDao.saveClosetDetails(insertObj);
 
@@ -415,7 +416,11 @@ class ClosetBao extends Base {
           });
 
           if (closetData.categoryId != closetDetails.categoryId) {
-            updateObj = { categoryId: closetData.categoryId, categoryName };
+            updateObj = {
+              categoryId: closetData.categoryId,
+              categoryName,
+              updatedOn: new Date().toISOString(),
+            };
             await ClosetDao.updateClosetDetails(whereObj, updateObj);
           }
 
@@ -423,6 +428,7 @@ class ClosetBao extends Base {
             updateObj = {
               subCategoryId: closetData.subCategoryId,
               subCategoryName,
+              updatedOn: new Date().toISOString(),
             };
             await ClosetDao.updateClosetDetails(whereObj, updateObj);
           }
@@ -431,6 +437,7 @@ class ClosetBao extends Base {
             updateObj = {
               brandId: closetData.brandId,
               brandName,
+              updatedOn: new Date().toISOString(),
             };
             await ClosetDao.updateClosetDetails(whereObj, updateObj);
           }
@@ -441,6 +448,7 @@ class ClosetBao extends Base {
           ) {
             updateObj = {
               season: closetData.season.toLowerCase(),
+              updatedOn: new Date().toISOString(),
             };
             await ClosetDao.updateClosetDetails(whereObj, updateObj);
           }
@@ -453,6 +461,7 @@ class ClosetBao extends Base {
             colorCode: closetData.colorCode.map(function (x) {
               return x.toLowerCase();
             }),
+            updatedOn: new Date().toISOString(),
           };
           await ClosetDao.updateClosetDetails(whereObj, updateObj);
           // }
@@ -476,6 +485,7 @@ class ClosetBao extends Base {
 
             updateObj = {
               itemImageUrl: uploadFileResult.Location,
+              updatedOn: new Date().toISOString(),
             };
             await ClosetDao.updateClosetDetails(whereObj, updateObj);
           }
