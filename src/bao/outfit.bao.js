@@ -331,6 +331,58 @@ class OutfitBao extends Base {
       throw e;
     }
   }
+
+  async editOutfitDetails(outfitData) {
+    try {
+      logger.info("inside createOutfit");
+      let userDetails = await UserDao.findUserId(outfitData.userId);
+      if (userDetails.length > 0) {
+        let insertObj,
+          whereObj = {
+            userId: outfitData.userId,
+            _id: outfitData.outfitId,
+          };
+        let outfitDetails = await OutfitDao.findSameOutfits(insertObj);
+        if (outfitDetails.length > 0) {
+          let updateObj = {
+            closetItemIds: outfitData.closetItemIds,
+            outfitImageType: outfitData.outfitImageType,
+            name: outfitData.name,
+            description: outfitData.description,
+            seasons: outfitData.seasons,
+            imageData: outfitData.imageData,
+            updatedOn: new Date().toISOString(),
+          };
+          await OutfitDao.updateOutfitDetails(whereObj, updateObj);
+          let getOutfitDetails = await OutfitDao.findSameOutfits(insertObj);
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            outfitId: getOutfitDetails[0]._id,
+            userId: getOutfitDetails[0].userId,
+            outfitImageType: getOutfitDetails[0].outfitImageType,
+            name: getOutfitDetails[0].name,
+            description: getOutfitDetails[0].description,
+            seasons: getOutfitDetails[0].seasons,
+            imageData: getOutfitDetails[0].imageData,
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[312],
+            statusMessage: constants.STATUS_MESSAGE[312],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 module.exports = OutfitBao;

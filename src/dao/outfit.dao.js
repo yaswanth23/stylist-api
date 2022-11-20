@@ -57,3 +57,13 @@ module.exports.removeClosetItems = async (obj) => {
     throw e;
   }
 };
+
+module.exports.updateOutfitDetails = async (whereObj, updateObj) => {
+  try {
+    const data = await Outfit.updateOne(whereObj, updateObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

@@ -107,6 +107,37 @@ module.exports.POST_getOneOutfitDetails = async (req, res) => {
   }
 };
 
+module.exports.POST_editOutfitDetails = async (req, res) => {
+  try {
+    logger.info("inside POST_editOutfitDetails");
+    const schemaVerifyCreateOutfit = Joi.object().keys({
+      userId: Joi.string().required(),
+      outfitId: Joi.string().required(),
+      closetItemIds: Joi.array().required(),
+      outfitImageType: Joi.string().required(),
+      name: Joi.string().required(),
+      description: Joi.string().required(),
+      seasons: Joi.array().required(),
+      imageData: Joi.array()
+        .items(
+          Joi.object().keys({
+            pan: Joi.object().required(),
+            imageSrc: Joi.string().required(),
+            closetItemId: Joi.string().required(),
+          })
+        )
+        .required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyCreateOutfit);
+    const outfitBao = new OutfitBao();
+    const result = await outfitBao.editOutfitDetails(params);
+    return _200(res, result);
+  } catch (e) {
+    console.log(e);
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,
