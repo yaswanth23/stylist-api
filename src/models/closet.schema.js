@@ -9,7 +9,7 @@ const schema = new mongoose.Schema({
   subCategoryName: String,
   brandId: Number,
   brandName: String,
-  season: String,
+  season: [String],
   colorCode: [String],
   createdOn: Date,
   updatedOn: Date,
