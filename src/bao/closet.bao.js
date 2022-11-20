@@ -113,7 +113,9 @@ class ClosetBao extends Base {
           subCategoryName,
           brandId: closetData.brandId,
           brandName,
-          season: closetData.season.toLowerCase(),
+          season: closetData.season.map(function (x) {
+            return x.toLowerCase();
+          }),
           colorCode: closetData.colorCode.map(function (x) {
             return x.toLowerCase();
           }),
@@ -442,29 +444,16 @@ class ClosetBao extends Base {
             await ClosetDao.updateClosetDetails(whereObj, updateObj);
           }
 
-          if (
-            String(closetData.season.toLowerCase()).valueOf() !=
-            String(closetDetails.season).valueOf()
-          ) {
-            updateObj = {
-              season: closetData.season.toLowerCase(),
-              updatedOn: new Date().toISOString(),
-            };
-            await ClosetDao.updateClosetDetails(whereObj, updateObj);
-          }
-
-          // if (
-          //   String(closetData.colorCode.toLowerCase()).valueOf() !=
-          //   String(closetDetails.colorCode).valueOf
-          // ) {
           updateObj = {
+            season: closetData.season.map(function (x) {
+              return x.toLowerCase();
+            }),
             colorCode: closetData.colorCode.map(function (x) {
               return x.toLowerCase();
             }),
             updatedOn: new Date().toISOString(),
           };
           await ClosetDao.updateClosetDetails(whereObj, updateObj);
-          // }
 
           let urlFlag =
             String(closetData.itemImageUrl).valueOf() !=

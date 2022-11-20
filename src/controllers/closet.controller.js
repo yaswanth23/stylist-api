@@ -35,7 +35,7 @@ module.exports.POST_addToCloset = async (req, res) => {
       categoryId: Joi.number().required(),
       subCategoryId: Joi.number().required(),
       brandId: Joi.number().required(),
-      season: Joi.string().required(),
+      season: Joi.array().items(Joi.string().required()),
       colorCode: Joi.array().items(Joi.string().min(7).max(7).required()),
     });
     let params = await validateSchema(req.body, schemaVerifyAddToCloset);
@@ -133,7 +133,7 @@ module.exports.POST_editClosetDetails = async (req, res) => {
       categoryId: Joi.number().required(),
       subCategoryId: Joi.number().required(),
       brandId: Joi.number().required(),
-      season: Joi.string().required(),
+      season: Joi.array().items(Joi.string().required()),
       colorCode: Joi.array().items(Joi.string().min(7).max(7).required()),
     });
     let params = await validateSchema(req.body, schemaVerifyEditClosetData);
