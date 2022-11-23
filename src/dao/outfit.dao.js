@@ -49,9 +49,12 @@ module.exports.removeClosetItems = async (obj) => {
       closetItemIds: { $in: [obj._id] },
     });
     if (data.length > 0) {
-      let whereObj = { userId: data[0].userId, _id: data[0]._id };
-      const result = await Outfit.deleteOne(whereObj);
-      return result;
+      await Promise.all(
+        data.map(async (element) => {
+          let whereObj = { userId: element.userId, _id: element._id };
+          await Outfit.deleteOne(whereObj);
+        })
+      );
     }
     return data;
   } catch (e) {
