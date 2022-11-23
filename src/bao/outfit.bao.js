@@ -240,6 +240,8 @@ class OutfitBao extends Base {
                 description: element.description,
                 seasons: element.seasons,
                 imageData: element.imageData,
+                createdDate: element.createdOn,
+                modifiedDate: element.updatedOn,
               };
               finalOutfitDetails.push(obj);
             })
