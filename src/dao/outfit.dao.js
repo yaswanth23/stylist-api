@@ -1,4 +1,5 @@
 const { Outfit } = require("../models");
+const logger = require("../common/logger")("outfit-dao");
 
 module.exports.saveOutfitDetails = async (insertObj) => {
   try {
@@ -43,15 +44,13 @@ module.exports.findOutfitByUserId = async (userId) => {
 
 module.exports.removeClosetItems = async (obj) => {
   try {
-    const data = await Outfit.update(
-      { userId: obj.userId },
-      {
-        $pull: {
-          closetItemIds: obj._id,
-        },
-      }
-    );
-    return data;
+    const data = await Outfit.find({
+      userId: obj.userId,
+      closetItemIds: { $in: [obj._id] },
+    });
+    let whereObj = { userId: data[0].userId, _id: data[0]._id };
+    const result = await Outfit.deleteOne(whereObj);
+    return result;
   } catch (e) {
     logger.error(e);
     throw e;
