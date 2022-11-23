@@ -116,6 +116,15 @@ module.exports.POST_filterCloset = async (req, res) => {
     });
     let params = await validateSchema(req.body, schemaVerifyFilters);
     const closetBao = new ClosetBao();
+    params = {
+      userId: params.userId,
+      categoryIds: params.categoryIds === undefined ? [] : params.categoryIds,
+      subCategoryIds:
+        params.subCategoryIds === undefined ? [] : params.subCategoryIds,
+      brandIds: params.brandIds === undefined ? [] : params.brandIds,
+      seasons: params.seasons === undefined ? [] : params.seasons,
+      colorCodes: params.colorCodes === undefined ? [] : params.colorCodes,
+    };
     const result = await closetBao.filterCloset(params);
     return _200(res, result);
   } catch (e) {
