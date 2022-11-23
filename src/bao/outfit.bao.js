@@ -251,8 +251,9 @@ class OutfitBao extends Base {
           };
         } else {
           return {
-            statusCode: constants.STATUS_CODES[313],
-            statusMessage: constants.STATUS_MESSAGE[313],
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            outfitDetails,
           };
         }
       } else {
