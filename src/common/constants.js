@@ -31,7 +31,7 @@ module.exports = {
     310: "Matching Outfit already exists",
     311: "Invalid closetItemIds",
     312: "Invalid outfitId",
-    313: "No outfits fot the user",
+    313: "No outfits for the user",
     401: "invalid OTP",
     402: "OTP has expired",
   },
