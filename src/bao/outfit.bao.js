@@ -13,7 +13,7 @@ class OutfitBao extends Base {
       logger.info("inside createOutfit");
       let userDetails = await UserDao.findUserId(outfitData.userId);
       if (userDetails.length > 0) {
-        if (outfitData.closetItemIds.length > 1) {
+        if (outfitData.closetItemIds.length > 0) {
           let finalData = [];
           let whereObj = {
             userId: outfitData.userId,
