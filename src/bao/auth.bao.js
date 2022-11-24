@@ -166,7 +166,7 @@ class AuthBao extends Base {
           name: user.name,
           gender: null,
           profilePicUrl: user.picture,
-          isProfileCreated: true,
+          isProfileCreated: false,
           createdOn: new Date().toISOString(),
           updatedOn: new Date().toISOString(),
         };
