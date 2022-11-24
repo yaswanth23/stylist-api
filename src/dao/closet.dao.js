@@ -1,4 +1,4 @@
-const { Categories, Brands, Closet } = require("../models");
+const { Categories, Brands, Colors, Closet } = require("../models");
 
 module.exports.getCategories = async () => {
   try {
@@ -13,6 +13,16 @@ module.exports.getCategories = async () => {
 module.exports.getBrands = async () => {
   try {
     const data = await Brands.find({});
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
+module.exports.getColors = async () => {
+  try {
+    const data = await Colors.find({});
     return data;
   } catch (e) {
     logger.error(e);

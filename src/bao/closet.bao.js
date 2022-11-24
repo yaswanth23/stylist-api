@@ -38,6 +38,21 @@ class ClosetBao extends Base {
     }
   }
 
+  async getColors() {
+    try {
+      logger.info("inside getColors");
+      let result = await ClosetDao.getColors();
+      return {
+        statusCode: constants.STATUS_CODES[200],
+        statusMessage: constants.STATUS_MESSAGE[200],
+        data: result,
+      };
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   async addToCloset(closetData) {
     try {
       logger.info("inside addToCloset");
