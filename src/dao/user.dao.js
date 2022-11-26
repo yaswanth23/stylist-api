@@ -78,3 +78,13 @@ module.exports.deleteUserAccount = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.findUserInstaId = async (instaId) => {
+  try {
+    const data = await User.find({ instaId });
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

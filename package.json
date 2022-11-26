@@ -22,6 +22,8 @@
     "helmet": "^6.0.0",
     "http": "^0.0.1-security",
     "joi": "^17.6.4",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^3.0.0",
     "luxon": "^3.0.4",
     "mongo": "^0.1.0",
     "mongoose": "^6.7.0",

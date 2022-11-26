@@ -13,7 +13,7 @@ module.exports.POST_sendOtp = async (req, res) => {
     });
     let params = await validateSchema(req.body, schemaSendOtp);
     const otpBao = new OtpBao();
-    const result = await otpBao.sendOtp(params.emailId, params.status);
+    const result = await otpBao.sendOtp(params.emailId.toLowerCase(), params.status);
     logger.info("result", result);
     return _200(res, result);
   } catch (e) {

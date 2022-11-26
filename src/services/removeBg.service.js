@@ -18,10 +18,6 @@ module.exports.removeBgFromImg = async (imageUrl, filePath) => {
         },
         function (error, response, body) {
           if (error) reject(error);
-          // return console.error(
-          //   "Request failed because invalid url or file",
-          //   error
-          // );
           if (response.statusCode != 200)
             return console.error(
               "error:",
