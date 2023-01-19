@@ -5,6 +5,8 @@ const app = express();
 const helmet = require("helmet");
 const cors = require("cors");
 const expressHttpContext = require("express-http-context");
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const routes = require("./routes");
 const {
@@ -12,6 +14,11 @@ const {
   _httpResponseInterceptor,
 } = require("./common/httpMiddleware");
 const logger = require("./common/logger")("app");
+
+const options = require("../swagger.json");
+
+const swaggerSpec = swaggerJsDoc(options);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.set("trust proxy", true);
 app.use(expressHttpContext.middleware);

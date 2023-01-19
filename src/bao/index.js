@@ -4,6 +4,7 @@ const UserBao = require("./user.bao");
 const PicsBao = require("./pics.bao");
 const ClosetBao = require("./closet.bao");
 const OutfitBao = require("./outfit.bao");
+const AdminBao = require("./admin.bao");
 
 module.exports = {
   OtpBao,
@@ -12,4 +13,5 @@ module.exports = {
   PicsBao,
   ClosetBao,
   OutfitBao,
+  AdminBao,
 };

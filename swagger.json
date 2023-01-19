@@ -1,0 +1,17 @@
+{
+  "definition": {
+    "openapi": "3.0.0",
+    "info": {
+      "description": "Vetr backend api docs",
+      "version": "1.0.0",
+      "title": "Stylist-api"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:9100",
+        "description": "Connect at localhost"
+      }
+    ]
+  },
+  "apis": ["./routes/index.js"]
+}
