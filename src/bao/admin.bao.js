@@ -3,7 +3,7 @@ const logger = require("../common/logger")("admin-bao");
 const constants = require("../common/constants");
 const nodemailer = require("nodemailer");
 const { CryptoService } = require("../services");
-const { AdminDao } = require("../dao");
+const { AdminDao, UserDao } = require("../dao");
 
 class AdminBao extends Base {
   constructor() {
@@ -168,6 +168,49 @@ class AdminBao extends Base {
           return {
             statusCode: constants.STATUS_CODES[316],
             statusMessage: constants.STATUS_MESSAGE[316],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async adminStats(emailId) {
+    try {
+      logger.info("inside adminStats", emailId);
+      const emailRegex =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const isValidEmail = emailRegex.test(emailId);
+      if (!isValidEmail) {
+        return {
+          statusCode: constants.STATUS_CODES[314],
+          statusMessage: constants.STATUS_MESSAGE[314],
+        };
+      }
+
+      let findEmailId = await AdminDao.findEmailId(emailId);
+      if (findEmailId.length > 0) {
+        if (findEmailId[0].role === "admin") {
+          let appUserCount = await UserDao.getUserCount();
+          let brandUserCount = await AdminDao.getBrandUserCount();
+
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            appUserCount,
+            brandUserCount,
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[318],
+            statusMessage: constants.STATUS_MESSAGE[318],
           };
         }
       } else {

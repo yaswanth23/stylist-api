@@ -28,3 +28,13 @@ module.exports.updatePasswordDetails = async (emailId, passkeyDetail) => {
     throw e;
   }
 };
+
+module.exports.getBrandUserCount = async () => {
+  try {
+    const count = await AdminUser.countDocuments({ role: "brand" });
+    return count;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

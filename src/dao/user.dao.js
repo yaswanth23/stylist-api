@@ -88,3 +88,13 @@ module.exports.findUserInstaId = async (instaId) => {
     throw e;
   }
 };
+
+module.exports.getUserCount = async () => {
+  try {
+    const count = await User.countDocuments({});
+    return count;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
