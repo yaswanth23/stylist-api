@@ -37,6 +37,7 @@ class AdminBao extends Base {
             statusMessage: constants.STATUS_MESSAGE[200],
             emailId: findEmailId[0].emailId,
             userId: findEmailId[0]._id,
+            role: findEmailId[0].role,
             createdOn: findEmailId[0].createdOn,
             updatedOn: findEmailId[0].updatedOn,
           };
@@ -111,6 +112,58 @@ class AdminBao extends Base {
           statusCode: constants.STATUS_CODES[200],
           statusMessage: "Mail sent successfully!",
         };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async changePassword(emailId, currentPassword, newPassword) {
+    try {
+      logger.info("inside changePassword", emailId);
+      const emailRegex =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const isValidEmail = emailRegex.test(emailId);
+      if (!isValidEmail) {
+        return {
+          statusCode: constants.STATUS_CODES[314],
+          statusMessage: constants.STATUS_MESSAGE[314],
+        };
+      }
+
+      let findEmailId = await AdminDao.findEmailId(emailId);
+      if (findEmailId.length > 0) {
+        let decryptedPassword = await CryptoService.decryptKey(
+          findEmailId[0].saltKey,
+          findEmailId[0].saltKeyIv,
+          findEmailId[0].encryptedData
+        );
+
+        if (currentPassword === decryptedPassword) {
+          let passkeyDetail = await CryptoService.encryptKey(newPassword);
+          await AdminDao.updatePasswordDetails(emailId, passkeyDetail);
+
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: "password successfully changed",
+            emailId: findEmailId[0].emailId,
+            userId: findEmailId[0]._id,
+            role: findEmailId[0].role,
+            createdOn: findEmailId[0].createdOn,
+            updatedOn: findEmailId[0].updatedOn,
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[316],
+            statusMessage: constants.STATUS_MESSAGE[316],
+          };
+        }
       } else {
         return {
           statusCode: constants.STATUS_CODES[302],

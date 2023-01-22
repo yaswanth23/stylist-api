@@ -6,6 +6,7 @@ const schema = new mongoose.Schema({
   saltKeyIv: String,
   encryptedData: String,
   isActive: Boolean,
+  role: String,
   createdOn: Date,
   updatedOn: Date,
 });
