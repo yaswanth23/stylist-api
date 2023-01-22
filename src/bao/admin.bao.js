@@ -139,6 +139,12 @@ class AdminBao extends Base {
 
       let findEmailId = await AdminDao.findEmailId(emailId);
       if (findEmailId.length > 0) {
+        if (currentPassword === newPassword) {
+          return {
+            statusCode: constants.STATUS_CODES[317],
+            statusMessage: constants.STATUS_MESSAGE[317],
+          };
+        }
         let decryptedPassword = await CryptoService.decryptKey(
           findEmailId[0].saltKey,
           findEmailId[0].saltKeyIv,
