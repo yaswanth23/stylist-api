@@ -98,3 +98,15 @@ module.exports.getUserCount = async () => {
     throw e;
   }
 };
+
+module.exports.getAllUsers = async (page, limit) => {
+  try {
+    const data = await User.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

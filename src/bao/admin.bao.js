@@ -224,6 +224,42 @@ class AdminBao extends Base {
       throw e;
     }
   }
+
+  async getAllUsers(emailId, page, limit) {
+    try {
+      logger.info("inside adminStats", emailId);
+      const emailRegex =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const isValidEmail = emailRegex.test(emailId);
+      if (!isValidEmail) {
+        return {
+          statusCode: constants.STATUS_CODES[314],
+          statusMessage: constants.STATUS_MESSAGE[314],
+        };
+      }
+
+      let findEmailId = await AdminDao.findEmailId(emailId);
+      if (findEmailId.length > 0) {
+        if (findEmailId[0].role === "admin") {
+          let usersList = await UserDao.getAllUsers(page, limit);
+          return { total: usersList.length, usersList };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[318],
+            statusMessage: constants.STATUS_MESSAGE[318],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
 }
 
 module.exports = AdminBao;

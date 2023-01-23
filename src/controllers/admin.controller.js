@@ -62,9 +62,9 @@ module.exports.POST_changePassword = async (req, res) => {
   }
 };
 
-module.exports.POST_adminStats = async (req, res) => {
+module.exports.GET_adminStats = async (req, res) => {
   try {
-    logger.info("inside POST_adminStats");
+    logger.info("inside GET_adminStats");
     const schemaCheckEmailId = Joi.object().keys({
       emailId: Joi.string().required(),
     });
@@ -72,6 +72,29 @@ module.exports.POST_adminStats = async (req, res) => {
     const adminBao = new AdminBao();
     const result = await adminBao.adminStats(params.emailId.toLowerCase());
     logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
+module.exports.GET_allUsers = async (req, res) => {
+  try {
+    logger.info("inside GET_allUsers");
+    const schemaCheckEmailId = Joi.object().keys({
+      emailId: Joi.string().required(),
+      page: Joi.number().optional(),
+      limit: Joi.number().optional(),
+    });
+    const { page = 1, limit = 10 } = req.query;
+    let params = await validateSchema(req.query, schemaCheckEmailId);
+    const adminBao = new AdminBao();
+    const result = await adminBao.getAllUsers(
+      params.emailId.toLowerCase(),
+      page,
+      limit
+    );
+    logger.info("success");
     return _200(res, result);
   } catch (e) {
     throw _sendGenericError(res, e);
