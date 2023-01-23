@@ -38,3 +38,14 @@ module.exports.getBrandUserCount = async () => {
     throw e;
   }
 };
+
+module.exports.saveUserDetails = async (insertObj) => {
+  try {
+    const data = new AdminUser(insertObj);
+    data.save();
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

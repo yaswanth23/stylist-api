@@ -227,7 +227,7 @@ class AdminBao extends Base {
 
   async getAllUsers(emailId, page, limit) {
     try {
-      logger.info("inside adminStats", emailId);
+      logger.info("inside getAllUsers", emailId);
       const emailRegex =
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       const isValidEmail = emailRegex.test(emailId);
@@ -243,6 +243,126 @@ class AdminBao extends Base {
         if (findEmailId[0].role === "admin") {
           let usersList = await UserDao.getAllUsers(page, limit);
           return { total: usersList.length, usersList };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[318],
+            statusMessage: constants.STATUS_MESSAGE[318],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async addBrandUser(adminEmailId, brandEmailId) {
+    try {
+      logger.info("inside addBrandUser", adminEmailId);
+      const emailRegex =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const isAdminValidEmail = emailRegex.test(adminEmailId);
+      const isBrandValidEmail = emailRegex.test(brandEmailId);
+      if (!isAdminValidEmail) {
+        return {
+          statusCode: constants.STATUS_CODES[314],
+          statusMessage: constants.STATUS_MESSAGE[314],
+        };
+      }
+      if (!isBrandValidEmail) {
+        return {
+          statusCode: constants.STATUS_CODES[314],
+          statusMessage: constants.STATUS_MESSAGE[314],
+        };
+      }
+
+      let findAdminEmailId = await AdminDao.findEmailId(adminEmailId);
+      let findBrandEmailId = await AdminDao.findEmailId(brandEmailId);
+      if (findAdminEmailId.length > 0) {
+        if (findAdminEmailId[0].role === "admin") {
+          if (findBrandEmailId.length > 0) {
+            return {
+              statusCode: constants.STATUS_CODES[319],
+              statusMessage: constants.STATUS_MESSAGE[319],
+            };
+          } else {
+            const characters =
+              "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let randomPassword = "";
+            for (let i = 0; i < 7; i++) {
+              randomPassword += characters.charAt(
+                Math.floor(Math.random() * characters.length)
+              );
+            }
+
+            let transporter = nodemailer.createTransport({
+              host: "smtp.gmail.com",
+              port: 587,
+              secure: false,
+              auth: {
+                user: process.env.EMAIL_ID,
+                pass: process.env.EMAIL_PASSWORD,
+              },
+            });
+            let mailOptions = {
+              from: process.env.EMAIL_ID,
+              to: brandEmailId,
+              subject:
+                "Invitation to Access the Admin Panel - Login credentials enclosed",
+              text: `Hi there,
+              We are excited to invite you to access the admin panel for our platform. Your account has been created with the following credentials:
+              
+              Username: ${brandEmailId}
+              Password: ${randomPassword}
+              
+              Please visit our platform at [platform link] to log in and start using the admin panel.
+              
+              As a reminder, we recommend that you change your password upon first logging in for added security.
+              
+              If you have any trouble logging in or have any questions about the admin panel, please don't hesitate to contact us at ${process.env.EMAIL_ID}.
+              
+              Thank you for joining our platform,
+              Team Vetir`,
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+              if (error) {
+                logger.error(error);
+              } else {
+                logger.info("Mail sent successfully!");
+              }
+            });
+
+            let passkeyDetail = await CryptoService.encryptKey(randomPassword);
+
+            let insertObj = {
+              emailId: brandEmailId,
+              saltKey: passkeyDetail.saltKey,
+              saltKeyIv: passkeyDetail.saltKeyIv,
+              encryptedData: passkeyDetail.encryptedData,
+              isActive: true,
+              role: "brand",
+              createdOn: new Date().toISOString(),
+              updatedOn: new Date().toISOString(),
+            };
+
+            let userData = await AdminDao.saveUserDetails(insertObj);
+
+            return {
+              statusCode: constants.STATUS_CODES[200],
+              statusMessage: "Invitation Mail Sent successfully!",
+              userId: userData._id,
+              emailId: userData.emailId,
+              isActive: userData.isActive,
+              role: userData.role,
+              createdOn: userData.createdOn,
+              updatedOn: userData.updatedOn,
+            };
+          }
         } else {
           return {
             statusCode: constants.STATUS_CODES[318],

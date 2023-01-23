@@ -101,6 +101,26 @@ module.exports.GET_allUsers = async (req, res) => {
   }
 };
 
+module.exports.POST_addBrandUser = async (req, res) => {
+  try {
+    logger.info("inside POST_addBrandUser");
+    const schemaCheckEmailId = Joi.object().keys({
+      adminEmailId: Joi.string().required(),
+      brandEmailId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaCheckEmailId);
+    const adminBao = new AdminBao();
+    const result = await adminBao.addBrandUser(
+      params.adminEmailId.toLowerCase(),
+      params.brandEmailId.toLowerCase()
+    );
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,
