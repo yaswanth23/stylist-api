@@ -164,6 +164,26 @@ module.exports.POST_deleteUsers = async (req, res) => {
   }
 };
 
+module.exports.GET_userDetails = async (req, res) => {
+  try {
+    logger.info("inside GET_userDetails");
+    const schemaVerifyData = Joi.object().keys({
+      adminUserId: Joi.string().required(),
+      userId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.query, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.getUserDetails(
+      params.adminUserId,
+      params.userId
+    );
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

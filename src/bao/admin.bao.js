@@ -3,7 +3,7 @@ const logger = require("../common/logger")("admin-bao");
 const constants = require("../common/constants");
 const nodemailer = require("nodemailer");
 const { CryptoService } = require("../services");
-const { AdminDao, UserDao, ClosetDao } = require("../dao");
+const { AdminDao, UserDao, ClosetDao, OutfitDao } = require("../dao");
 
 class AdminBao extends Base {
   constructor() {
@@ -450,6 +450,108 @@ class AdminBao extends Base {
           statusCode: constants.STATUS_CODES[200],
           statusMessage: "User accounts deleted successfully",
         };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async getUserDetails(adminUserId, userId) {
+    try {
+      logger.info("inside getUserDetails", adminUserId);
+      let findAdminDetails = await AdminDao.findAdminUserId(adminUserId);
+      if (findAdminDetails.length > 0) {
+        let userDetails = await UserDao.findUserId(userId);
+        let res;
+        if (userDetails.length > 0) {
+          let outfitDetails = await OutfitDao.findOutfitByUserId(userId);
+          let finalOutfitDetails = [];
+          if (outfitDetails.length > 0) {
+            await Promise.all(
+              outfitDetails.map(async (element) => {
+                let closetDetailsList = [];
+                await Promise.all(
+                  element.closetItemIds.map(async (element) => {
+                    let closetDetails = await ClosetDao.findClosetId(element);
+                    let obj = {
+                      userId: closetDetails[0].userId,
+                      closetItemId: closetDetails[0]._id,
+                      itemImageUrl: closetDetails[0].itemImageUrl,
+                      categoryId: closetDetails[0].categoryId,
+                      categoryName: closetDetails[0].categoryName,
+                      subCategoryId: closetDetails[0].subCategoryId,
+                      subCategoryName: closetDetails[0].subCategoryName,
+                      brandId: closetDetails[0].brandId,
+                      brandName: closetDetails[0].brandName,
+                      season: closetDetails[0].season,
+                      colorCode: closetDetails[0].colorCode,
+                    };
+                    closetDetailsList.push(obj);
+                  })
+                );
+                let obj = {
+                  outfitId: element._id,
+                  userId: element.userId,
+                  closetDetailsList,
+                  outfitImageType: element.outfitImageType,
+                  name: element.name,
+                  description: element.description,
+                  seasons: element.seasons,
+                  imageData: element.imageData,
+                  createdDate: element.createdOn,
+                  modifiedDate: element.updatedOn,
+                };
+                finalOutfitDetails.push(obj);
+              })
+            );
+          }
+          const closetDetails = await ClosetDao.getClosetDetails(userId);
+          let data = [];
+          closetDetails.map((element) => {
+            let obj = {
+              userId: element.userId,
+              closetItemId: element._id,
+              itemImageUrl: element.itemImageUrl,
+              categoryId: element.categoryId,
+              categoryName: element.categoryName,
+              subCategoryId: element.subCategoryId,
+              subCategoryName: element.subCategoryName,
+              brandId: element.brandId,
+              brandName: element.brandName,
+              season: element.season,
+              colorCode: element.colorCode,
+            };
+            data.push(obj);
+          });
+          res = {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            userId: userDetails[0].userId,
+            emailId: userDetails[0].emailId,
+            name: userDetails[0].name == undefined ? null : userDetails[0].name,
+            gender:
+              userDetails[0].gender == undefined ? null : userDetails[0].gender,
+            profilePicUrl:
+              userDetails[0].profilePicUrl == undefined
+                ? null
+                : userDetails[0].profilePicUrl,
+            isProfileCreated: userDetails[0].isProfileCreated,
+            outfitDetails: finalOutfitDetails,
+            closetDetails: data,
+          };
+        } else {
+          res = {
+            statusCode: constants.STATUS_CODES[302],
+            statusMessage: constants.STATUS_MESSAGE[302],
+          };
+        }
+        return res;
       } else {
         return {
           statusCode: constants.STATUS_CODES[302],
