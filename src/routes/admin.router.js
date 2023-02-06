@@ -9,5 +9,6 @@ router.get("/stats", AdminController.GET_adminStats);
 router.get("/getAllUsers", AdminController.GET_allUsers);
 router.get("/getAllBrands", AdminController.GET_allBrands);
 router.post("/addBrandUser", AdminController.POST_addBrandUser);
+router.post("/delete/users", AdminController.POST_deleteUsers);
 
 module.exports = router;

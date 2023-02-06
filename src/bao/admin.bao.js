@@ -3,7 +3,7 @@ const logger = require("../common/logger")("admin-bao");
 const constants = require("../common/constants");
 const nodemailer = require("nodemailer");
 const { CryptoService } = require("../services");
-const { AdminDao, UserDao } = require("../dao");
+const { AdminDao, UserDao, ClosetDao } = require("../dao");
 
 class AdminBao extends Base {
   constructor() {
@@ -426,6 +426,30 @@ class AdminBao extends Base {
             statusMessage: constants.STATUS_MESSAGE[318],
           };
         }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async deleteUserAccounts(adminUserId, userIds) {
+    try {
+      logger.info("inside deleteUserAccounts", adminUserId);
+      let findAdminDetails = await AdminDao.findAdminUserId(adminUserId);
+      if (findAdminDetails.length > 0) {
+        let whereObj = { userId: { $in: userIds } };
+        await UserDao.deleteUserAccount(whereObj);
+        await ClosetDao.deleteClosetItems(whereObj);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "User accounts deleted successfully",
+        };
       } else {
         return {
           statusCode: constants.STATUS_CODES[302],

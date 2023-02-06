@@ -144,6 +144,26 @@ module.exports.GET_allBrands = async (req, res) => {
   }
 };
 
+module.exports.POST_deleteUsers = async (req, res) => {
+  try {
+    logger.info("inside POST_deleteUsers");
+    const schemaVerifyData = Joi.object().keys({
+      adminUserId: Joi.string().required(),
+      userIds: Joi.array().items(Joi.string().required()),
+    });
+    let params = await validateSchema(req.body, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.deleteUserAccounts(
+      params.adminUserId,
+      params.userIds
+    );
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

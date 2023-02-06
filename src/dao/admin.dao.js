@@ -61,3 +61,13 @@ module.exports.getAllBrands = async (page, limit) => {
     throw e;
   }
 };
+
+module.exports.findAdminUserId = async (adminUserId) => {
+  try {
+    const data = await AdminUser.find({ _id: adminUserId, isActive: true });
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
