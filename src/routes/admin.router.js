@@ -7,6 +7,7 @@ router.post("/forgetPassword", AdminController.POST_forgetPassword);
 router.post("/changePassword", AdminController.POST_changePassword);
 router.get("/stats", AdminController.GET_adminStats);
 router.get("/getAllUsers", AdminController.GET_allUsers);
+router.get("/getAllBrands", AdminController.GET_allBrands);
 router.post("/addBrandUser", AdminController.POST_addBrandUser);
 
 module.exports = router;

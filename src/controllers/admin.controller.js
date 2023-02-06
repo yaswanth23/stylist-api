@@ -121,6 +121,29 @@ module.exports.POST_addBrandUser = async (req, res) => {
   }
 };
 
+module.exports.GET_allBrands = async (req, res) => {
+  try {
+    logger.info("inside GET_allBrands");
+    const schemaCheckEmailId = Joi.object().keys({
+      emailId: Joi.string().required(),
+      page: Joi.number().optional(),
+      limit: Joi.number().optional(),
+    });
+    const { page = 1, limit = 10 } = req.query;
+    let params = await validateSchema(req.query, schemaCheckEmailId);
+    const adminBao = new AdminBao();
+    const result = await adminBao.getAllBrands(
+      params.emailId.toLowerCase(),
+      page,
+      limit
+    );
+    logger.info("success");
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

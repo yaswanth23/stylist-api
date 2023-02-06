@@ -49,3 +49,15 @@ module.exports.saveUserDetails = async (insertObj) => {
     throw e;
   }
 };
+
+module.exports.getAllBrands = async (page, limit) => {
+  try {
+    const data = await AdminUser.find({ role: "brand" })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

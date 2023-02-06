@@ -242,7 +242,17 @@ class AdminBao extends Base {
       if (findEmailId.length > 0) {
         if (findEmailId[0].role === "admin") {
           let usersList = await UserDao.getAllUsers(page, limit);
-          return { total: usersList.length, usersList };
+          const filteredUsers = usersList.map((user) => ({
+            userId: user.userId,
+            emailId: user.emailId,
+            name: user?.name,
+            gender: user?.gender,
+            profilePicUrl: user?.profilePicUrl,
+            isProfileCreated: user.isProfileCreated,
+            createdOn: user.createdOn,
+            updatedOn: user.updatedOn,
+          }));
+          return { total: filteredUsers.length, filteredUsers };
         } else {
           return {
             statusCode: constants.STATUS_CODES[318],
@@ -363,6 +373,53 @@ class AdminBao extends Base {
               updatedOn: userData.updatedOn,
             };
           }
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[318],
+            statusMessage: constants.STATUS_MESSAGE[318],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async getAllBrands(emailId, page, limit) {
+    try {
+      logger.info("inside getAllBrands", emailId);
+      const emailRegex =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const isValidEmail = emailRegex.test(emailId);
+      if (!isValidEmail) {
+        return {
+          statusCode: constants.STATUS_CODES[314],
+          statusMessage: constants.STATUS_MESSAGE[314],
+        };
+      }
+
+      let findEmailId = await AdminDao.findEmailId(emailId);
+      if (findEmailId.length > 0) {
+        if (findEmailId[0].role === "admin") {
+          let brandsList = await AdminDao.getAllBrands(page, limit);
+          let transformedBrandsList = brandsList.map((brand) => ({
+            brandId: brand._id,
+            emailId: brand.emailId,
+            isActive: brand.isActive,
+            role: brand.role,
+            createdOn: brand.createdOn,
+            updatedOn: brand.updatedOn,
+          }));
+          return {
+            total: transformedBrandsList.length,
+            brandsList: transformedBrandsList,
+          };
         } else {
           return {
             statusCode: constants.STATUS_CODES[318],
