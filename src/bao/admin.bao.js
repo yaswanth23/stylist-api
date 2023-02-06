@@ -1,4 +1,5 @@
 const Base = require("./base");
+const { v4: uuidv4 } = require("uuid");
 const logger = require("../common/logger")("admin-bao");
 const constants = require("../common/constants");
 const nodemailer = require("nodemailer");
@@ -561,6 +562,72 @@ class AdminBao extends Base {
     } catch (e) {
       logger.error(e);
       throw e;
+    }
+  }
+
+  async addNewUser(adminUserId, name, emailId, gender) {
+    try {
+      logger.info("inside addNewUser", adminUserId);
+      let findAdminDetails = await AdminDao.findAdminUserId(adminUserId);
+      if (findAdminDetails.length > 0) {
+        const emailRegex =
+          /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const isValidEmail = emailRegex.test(emailId);
+        if (!isValidEmail) {
+          return {
+            statusCode: constants.STATUS_CODES[314],
+            statusMessage: constants.STATUS_MESSAGE[314],
+          };
+        }
+        let findEmailId = await UserDao.findUserEmailId(emailId);
+        if (findEmailId.length > 0) {
+          return {
+            statusCode: constants.STATUS_CODES[301],
+            statusMessage: constants.STATUS_MESSAGE[301],
+          };
+        }
+        let userId = -1;
+        let isProfileCreated = false;
+        do {
+          userId = await this.generateUserId();
+        } while (userId == null);
+        let insertObj = {
+          userId,
+          emailId,
+          name,
+          gender,
+          isProfileCreated,
+          createdOn: new Date().toISOString(),
+          updatedOn: new Date().toISOString(),
+        };
+        await UserDao.saveUserDetails(insertObj);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          userId,
+          emailId,
+          name,
+          gender,
+          isProfileCreated,
+          createdOn: new Date().toISOString(),
+          updatedOn: new Date().toISOString(),
+        };
+      } else {
+        return {};
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async generateUserId() {
+    let userId = uuidv4();
+    let userExist = await UserDao.findUserId(userId);
+    if (userExist.length == 0) {
+      return userId;
+    } else {
+      return null;
     }
   }
 }
