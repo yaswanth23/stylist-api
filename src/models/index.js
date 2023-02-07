@@ -6,6 +6,7 @@ const Closet = require("./closet.schema");
 const Outfit = require("./outfits.schema");
 const Colors = require("./colors.schema");
 const AdminUser = require("./admin.user.schema");
+const Products = require("./products.schema");
 
 module.exports = {
   Otp,
@@ -16,4 +17,5 @@ module.exports = {
   Outfit,
   Colors,
   AdminUser,
+  Products,
 };

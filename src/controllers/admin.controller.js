@@ -272,6 +272,32 @@ module.exports.POST_deleteBrands = async (req, res) => {
   }
 };
 
+module.exports.POST_addProduct = async (req, res) => {
+  try {
+    logger.info("inside POST_deleteBrands");
+    const schemaVerifyData = Joi.object().keys({
+      adminUserId: Joi.string().optional(),
+      brandId: Joi.string().required(),
+      productName: Joi.string().required(),
+      productPrice: Joi.number().required(),
+      productDescription: Joi.string().required(),
+      productColor: Joi.string().required(),
+      imageUrls: Joi.array().items(Joi.string().required()),
+      productCategory: Joi.string().required(),
+      seasons: Joi.array().items(Joi.string().required()),
+      productSizes: Joi.array().items(Joi.string().required()),
+      productButtonLink: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.addProduct(params);
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

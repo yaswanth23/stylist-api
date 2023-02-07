@@ -72,6 +72,20 @@ module.exports.findAdminUserId = async (adminUserId) => {
   }
 };
 
+module.exports.findBrandUserId = async (brandUserId) => {
+  try {
+    const data = await AdminUser.find({
+      _id: brandUserId,
+      isActive: true,
+      role: "brand",
+    });
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
 module.exports.deleteBrandAccount = async (whereObj) => {
   try {
     const data = await AdminUser.deleteMany(whereObj);

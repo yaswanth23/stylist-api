@@ -4,7 +4,13 @@ const logger = require("../common/logger")("admin-bao");
 const constants = require("../common/constants");
 const nodemailer = require("nodemailer");
 const { CryptoService } = require("../services");
-const { AdminDao, UserDao, ClosetDao, OutfitDao } = require("../dao");
+const {
+  AdminDao,
+  UserDao,
+  ClosetDao,
+  OutfitDao,
+  ProductsDao,
+} = require("../dao");
 
 class AdminBao extends Base {
   constructor() {
@@ -727,6 +733,58 @@ class AdminBao extends Base {
         return {
           statusCode: constants.STATUS_CODES[302],
           statusMessage: "admin user not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async addProduct(data) {
+    try {
+      logger.info("inside addProduct", data.brandId);
+      let findBrandUserId = await AdminDao.findBrandUserId(data.brandId);
+      if (findBrandUserId.length > 0) {
+        let insertObj = {
+          brandId: data.brandId,
+          productName: data.productName,
+          productPrice: data.productPrice,
+          productDescription: data.productPrice,
+          productColor: data.productColor,
+          imageUrls: data.imageUrls,
+          productCategory: data.productCategory,
+          seasons: data.seasons,
+          productSizes: data.productSizes,
+          productButtonLink: data.productButtonLink,
+          productStatus: "Not published",
+          createdOn: new Date().toISOString(),
+          updatedOn: new Date().toISOString(),
+        };
+        let response = await ProductsDao.saveProductDetails(insertObj);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "Product added successfully",
+          productDetails: {
+            productId: response._id,
+            productName: response.productName,
+            productPrice: response.productPrice,
+            productDescription: response.productPrice,
+            productColor: response.productColor,
+            imageUrls: response.imageUrls,
+            productCategory: response.productCategory,
+            seasons: response.seasons,
+            productSizes: response.productSizes,
+            productButtonLink: response.productButtonLink,
+            productStatus: response.productStatus,
+            createdOn: response.createdOn,
+            updatedOn: response.updatedOn,
+          },
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "brand id not found",
         };
       }
     } catch (e) {
