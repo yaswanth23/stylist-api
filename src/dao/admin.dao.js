@@ -71,3 +71,13 @@ module.exports.findAdminUserId = async (adminUserId) => {
     throw e;
   }
 };
+
+module.exports.deleteBrandAccount = async (whereObj) => {
+  try {
+    const data = await AdminUser.deleteMany(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

@@ -709,6 +709,32 @@ class AdminBao extends Base {
     }
   }
 
+  async deleteBrandAccounts(adminUserId, brandIds) {
+    try {
+      logger.info("inside deleteBrandAccounts", adminUserId);
+      let findAdminDetails = await AdminDao.findAdminUserId(adminUserId);
+      if (findAdminDetails.length > 0) {
+        let whereObj = {
+          _id: { $in: brandIds },
+          role: "brand",
+        };
+        await AdminDao.deleteBrandAccount(whereObj);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "Brand account deleted successfully",
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "admin user not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   async generateUserId() {
     let userId = uuidv4();
     let userExist = await UserDao.findUserId(userId);

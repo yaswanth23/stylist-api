@@ -252,6 +252,26 @@ module.exports.POST_removeUserOutfitItem = async (req, res) => {
   }
 };
 
+module.exports.POST_deleteBrands = async (req, res) => {
+  try {
+    logger.info("inside POST_deleteBrands");
+    const schemaVerifyData = Joi.object().keys({
+      adminUserId: Joi.string().required(),
+      brandIds: Joi.array().items(Joi.string().required()),
+    });
+    let params = await validateSchema(req.body, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.deleteBrandAccounts(
+      params.adminUserId,
+      params.brandIds
+    );
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,
