@@ -208,6 +208,28 @@ module.exports.POST_addNewUser = async (req, res) => {
   }
 };
 
+module.exports.POST_removeUserClosetItem = async (req, res) => {
+  try {
+    logger.info("inside POST_removeUserClosetItem");
+    const schemaVerifyDetails = Joi.object().keys({
+      adminUserId: Joi.string().required(),
+      userId: Joi.string().required(),
+      closetItemId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyDetails);
+    const adminBao = new AdminBao();
+    const result = await adminBao.removeUserClosetItem(
+      params.adminUserId,
+      params.userId,
+      params.closetItemId
+    );
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

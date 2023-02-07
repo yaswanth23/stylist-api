@@ -613,7 +613,53 @@ class AdminBao extends Base {
           updatedOn: new Date().toISOString(),
         };
       } else {
-        return {};
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: constants.STATUS_MESSAGE[302],
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async removeUserClosetItem(adminUserId, userId, closetId) {
+    try {
+      logger.info("inside addNewUser", adminUserId);
+      let findAdminDetails = await AdminDao.findAdminUserId(adminUserId);
+      if (findAdminDetails.length > 0) {
+        let userDetails = await UserDao.findUserId(userId);
+        if (userDetails.length > 0) {
+          let closetDetails = await ClosetDao.findClosetId(closetId);
+          if (closetDetails.length > 0) {
+            let whereObj = {
+              userId,
+              _id: closetId,
+            };
+            await ClosetDao.deleteClosetItem(whereObj);
+            await OutfitDao.removeClosetItems(whereObj);
+            return {
+              statusCode: constants.STATUS_CODES[200],
+              statusMessage: "item deleted successfully",
+            };
+          } else {
+            return {
+              statusCode: constants.STATUS_CODES[308],
+              statusMessage: constants.STATUS_MESSAGE[308],
+            };
+          }
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[302],
+            statusMessage: constants.STATUS_MESSAGE[302],
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "admin user not found",
+        };
       }
     } catch (e) {
       logger.error(e);
