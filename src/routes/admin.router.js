@@ -15,6 +15,10 @@ router.post(
   "/remove/user/closetItem",
   AdminController.POST_removeUserClosetItem
 );
+router.post(
+  "/remove/user/outfitItem",
+  AdminController.POST_removeUserOutfitItem
+);
 router.post("/delete/users", AdminController.POST_deleteUsers);
 
 module.exports = router;
