@@ -725,6 +725,7 @@ class AdminBao extends Base {
           role: "brand",
         };
         await AdminDao.deleteBrandAccount(whereObj);
+        await ProductsDao.deleteProductData({ brandId: { $in: brandIds } });
         return {
           statusCode: constants.STATUS_CODES[200],
           statusMessage: "Brand account deleted successfully",

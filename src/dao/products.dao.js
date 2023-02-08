@@ -10,3 +10,13 @@ module.exports.saveProductDetails = async (insertObj) => {
     throw e;
   }
 };
+
+module.exports.deleteProductData = async (whereObj) => {
+  try {
+    const data = await Products.deleteMany(whereObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
