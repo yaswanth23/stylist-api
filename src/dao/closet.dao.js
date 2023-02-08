@@ -1,4 +1,5 @@
 const { Categories, Brands, Colors, Closet } = require("../models");
+const logger = require("../common/logger")("closet-dao");
 
 module.exports.getCategories = async () => {
   try {

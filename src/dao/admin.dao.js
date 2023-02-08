@@ -1,4 +1,5 @@
 const { AdminUser } = require("../models");
+const logger = require("../common/logger")("adminuser-dao");
 
 module.exports.findEmailId = async (emailId) => {
   try {

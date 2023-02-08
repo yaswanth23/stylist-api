@@ -1,4 +1,5 @@
 const { User } = require("../models");
+const logger = require("../common/logger")("user-dao");
 
 module.exports.findUserId = async (userId) => {
   try {

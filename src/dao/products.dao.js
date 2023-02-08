@@ -1,4 +1,5 @@
 const { Products } = require("../models");
+const logger = require("../common/logger")("products-dao");
 
 module.exports.saveProductDetails = async (insertObj) => {
   try {

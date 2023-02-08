@@ -1,4 +1,5 @@
 const { Otp } = require("../models");
+const logger = require("../common/logger")("otp-dao");
 
 module.exports.saveOtpDetails = async (emailId, otp, status) => {
   try {
