@@ -45,7 +45,7 @@ module.exports.findProduct = async (productId) => {
 
 module.exports.updateProductStatus = async (productId) => {
   try {
-    let whereObj = { productId };
+    let whereObj = { _id: productId };
     let updateObj = {
       $set: {
         productStatus: "published",
@@ -62,7 +62,7 @@ module.exports.updateProductStatus = async (productId) => {
 
 module.exports.updateProductDetails = async (productId, updateObj) => {
   try {
-    let whereObj = { productId };
+    let whereObj = { _id: productId };
     const data = await Products.updateOne(whereObj, updateObj);
     return data;
   } catch (e) {
