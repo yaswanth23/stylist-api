@@ -797,7 +797,7 @@ class AdminBao extends Base {
   async getBrandProducts(brandId) {
     try {
       logger.info("inside getBrandProducts", brandId);
-      let findBrandUserId = await AdminDao.findBrandUserId(data.brandId);
+      let findBrandUserId = await AdminDao.findBrandUserId(brandId);
       if (findBrandUserId.length > 0) {
         let productsList = await ProductsDao.getProductDetails(brandId);
         return {
