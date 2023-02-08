@@ -71,3 +71,13 @@ module.exports.updateProductDetails = async (productId, updateObj) => {
     throw e;
   }
 };
+
+module.exports.getBrandProductsCount = async (brandId) => {
+  try {
+    const count = await Products.countDocuments({ brandId });
+    return count;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

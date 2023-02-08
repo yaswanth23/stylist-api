@@ -415,17 +415,23 @@ class AdminBao extends Base {
       if (findEmailId.length > 0) {
         if (findEmailId[0].role === "admin") {
           let brandsList = await AdminDao.getAllBrands(page, limit);
-          let transformedBrandsList = brandsList.map((brand) => ({
-            brandId: brand._id,
-            emailId: brand.emailId,
-            isActive: brand.isActive,
-            role: brand.role,
-            createdOn: brand.createdOn,
-            updatedOn: brand.updatedOn,
-          }));
+          let transformedBrandsList = brandsList.map(async (brand) => {
+            let productCount = await ProductsDao.getBrandProductsCount(
+              brand._id
+            );
+            return {
+              brandId: brand._id,
+              emailId: brand.emailId,
+              isActive: brand.isActive,
+              role: brand.role,
+              productCount: productCount,
+              createdOn: brand.createdOn,
+              updatedOn: brand.updatedOn,
+            };
+          });
           return {
-            total: transformedBrandsList.length,
-            brandsList: transformedBrandsList,
+            total: (await Promise.all(transformedBrandsList)).length,
+            brandsList: await Promise.all(transformedBrandsList),
           };
         } else {
           return {
@@ -925,7 +931,8 @@ class AdminBao extends Base {
         };
       }
     } catch (e) {
-      logger.error(e);
+      console.log(e);
+      // logger.error(e);
       throw e;
     }
   }
