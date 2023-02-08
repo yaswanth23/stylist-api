@@ -301,16 +301,83 @@ module.exports.POST_addProduct = async (req, res) => {
 module.exports.GET_getBrandProducts = async (req, res) => {
   try {
     logger.info("inside GET_getBrandProducts");
-    const schemaCheckEmailId = Joi.object().keys({
+    const schemaVerifyData = Joi.object().keys({
       brandId: Joi.string().required(),
       page: Joi.number().optional(),
       limit: Joi.number().optional(),
     });
     // const { page = 1, limit = 10 } = req.query;
-    let params = await validateSchema(req.query, schemaCheckEmailId);
+    let params = await validateSchema(req.query, schemaVerifyData);
     const adminBao = new AdminBao();
     const result = await adminBao.getBrandProducts(params.brandId);
     logger.info("success");
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
+module.exports.POST_publishProduct = async (req, res) => {
+  try {
+    logger.info("inside POST_publishProduct");
+    const schemaVerifyData = Joi.object().keys({
+      brandId: Joi.string().required(),
+      productId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.publishProduct(
+      params.brandId,
+      params.productId
+    );
+    logger.info("success");
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
+module.exports.POST_deleteProducts = async (req, res) => {
+  try {
+    logger.info("inside POST_deleteProducts");
+    const schemaVerifyData = Joi.object().keys({
+      brandId: Joi.string().required(),
+      productIds: Joi.array().items(Joi.string().required()),
+    });
+    let params = await validateSchema(req.body, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.deleteProducts(
+      params.brandId,
+      params.productIds
+    );
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
+module.exports.POST_updateProduct = async (req, res) => {
+  try {
+    logger.info("inside POST_updateProduct");
+    const schemaVerifyData = Joi.object().keys({
+      adminUserId: Joi.string().optional(),
+      brandId: Joi.string().required(),
+      productId: Joi.string().required(),
+      productName: Joi.string().required(),
+      productPrice: Joi.number().required(),
+      productDescription: Joi.string().required(),
+      productColor: Joi.string().required(),
+      imageUrls: Joi.array().items(Joi.string().required()),
+      productCategory: Joi.string().required(),
+      seasons: Joi.array().items(Joi.string().required()),
+      productSizes: Joi.array().items(Joi.string().required()),
+      productButtonLink: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.updateProduct(params);
+    logger.info("result", result);
     return _200(res, result);
   } catch (e) {
     throw _sendGenericError(res, e);

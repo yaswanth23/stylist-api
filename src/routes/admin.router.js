@@ -21,6 +21,9 @@ router.post(
 );
 router.post("/add/product", AdminController.POST_addProduct);
 router.get("/get/brandProducts", AdminController.GET_getBrandProducts);
+router.post("/publishProduct", AdminController.POST_publishProduct);
+router.post("/update/product", AdminController.POST_updateProduct);
+router.post("/delete/products", AdminController.POST_deleteProducts);
 router.post("/delete/users", AdminController.POST_deleteUsers);
 router.post("/delete/brands", AdminController.POST_deleteBrands);
 

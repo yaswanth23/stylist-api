@@ -817,6 +817,119 @@ class AdminBao extends Base {
     }
   }
 
+  async publishProduct(brandId, productId) {
+    try {
+      logger.info("inside publishProduct", brandId);
+      let findBrandUserId = await AdminDao.findBrandUserId(brandId);
+      if (findBrandUserId.length > 0) {
+        let productDetails = await ProductsDao.findProduct(productId);
+        if (productDetails.length > 0) {
+          await ProductsDao.updateProductStatus(productId);
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: "Product published successfully",
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[302],
+            statusMessage: "product id not found",
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "brand id not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async deleteProducts(brandId, productIds) {
+    try {
+      logger.info("inside deleteProducts", brandId);
+      let findBrandUserId = await AdminDao.findBrandUserId(brandId);
+      if (findBrandUserId.length > 0) {
+        await ProductsDao.deleteProductData({ _id: { $in: productIds } });
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "products deleted successfully",
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "brand id not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async updateProduct(data) {
+    try {
+      logger.info("inside updateProduct", data.brandId);
+      let findBrandUserId = await AdminDao.findBrandUserId(data.brandId);
+      if (findBrandUserId.length > 0) {
+        let productDetails = await ProductsDao.findProduct(data.productId);
+        if (productDetails.length > 0) {
+          let updateObj = {
+            $set: {
+              productName: data.productName,
+              productPrice: data.productPrice,
+              productDescription: data.productPrice,
+              productColor: data.productColor,
+              imageUrls: data.imageUrls,
+              productCategory: data.productCategory,
+              seasons: data.seasons,
+              productSizes: data.productSizes,
+              productButtonLink: data.productButtonLink,
+              updatedOn: new Date().toISOString(),
+            },
+          };
+          await ProductsDao.updateProductDetails(data.productId, updateObj);
+          let productDetails = await ProductsDao.findProduct(data.productId);
+          let response = productDetails[0];
+          return {
+            statusCode: constants.STATUS_CODES[200],
+            statusMessage: constants.STATUS_MESSAGE[200],
+            productDetails: {
+              productId: response._id,
+              productName: response.productName,
+              productPrice: response.productPrice,
+              productDescription: response.productPrice,
+              productColor: response.productColor,
+              imageUrls: response.imageUrls,
+              productCategory: response.productCategory,
+              seasons: response.seasons,
+              productSizes: response.productSizes,
+              productButtonLink: response.productButtonLink,
+              productStatus: response.productStatus,
+              createdOn: response.createdOn,
+              updatedOn: response.updatedOn,
+            },
+          };
+        } else {
+          return {
+            statusCode: constants.STATUS_CODES[302],
+            statusMessage: "product id not found",
+          };
+        }
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "brand id not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   async generateUserId() {
     let userId = uuidv4();
     let userExist = await UserDao.findUserId(userId);
