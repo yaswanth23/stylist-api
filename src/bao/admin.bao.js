@@ -809,6 +809,8 @@ class AdminBao extends Base {
         return {
           statusCode: constants.STATUS_CODES[200],
           statusMessage: constants.STATUS_MESSAGE[200],
+          brandId,
+          brandName: findBrandUserId[0].emailId,
           productsList,
         };
       } else {
