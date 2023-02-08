@@ -298,6 +298,25 @@ module.exports.POST_addProduct = async (req, res) => {
   }
 };
 
+module.exports.GET_getBrandProducts = async (req, res) => {
+  try {
+    logger.info("inside GET_getBrandProducts");
+    const schemaCheckEmailId = Joi.object().keys({
+      brandId: Joi.string().required(),
+      page: Joi.number().optional(),
+      limit: Joi.number().optional(),
+    });
+    // const { page = 1, limit = 10 } = req.query;
+    let params = await validateSchema(req.query, schemaCheckEmailId);
+    const adminBao = new AdminBao();
+    const result = await adminBao.getBrandProducts(params.brandId);
+    logger.info("success");
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

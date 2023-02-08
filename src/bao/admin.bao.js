@@ -794,6 +794,29 @@ class AdminBao extends Base {
     }
   }
 
+  async getBrandProducts(brandId) {
+    try {
+      logger.info("inside getBrandProducts", brandId);
+      let findBrandUserId = await AdminDao.findBrandUserId(data.brandId);
+      if (findBrandUserId.length > 0) {
+        let productsList = await ProductsDao.getProductDetails(brandId);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          productsList,
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "brand id not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   async generateUserId() {
     let userId = uuidv4();
     let userExist = await UserDao.findUserId(userId);

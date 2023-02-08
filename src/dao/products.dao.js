@@ -20,3 +20,13 @@ module.exports.deleteProductData = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.getProductDetails = async (brandId) => {
+  try {
+    const data = await Products.find({ brandId });
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
