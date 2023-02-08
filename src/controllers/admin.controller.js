@@ -274,7 +274,7 @@ module.exports.POST_deleteBrands = async (req, res) => {
 
 module.exports.POST_addProduct = async (req, res) => {
   try {
-    logger.info("inside POST_deleteBrands");
+    logger.info("inside POST_addProduct");
     const schemaVerifyData = Joi.object().keys({
       adminUserId: Joi.string().optional(),
       brandId: Joi.string().required(),

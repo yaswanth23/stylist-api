@@ -19,7 +19,7 @@ router.post(
   "/remove/user/outfitItem",
   AdminController.POST_removeUserOutfitItem
 );
-// router.post("/add/brandProducts", AdminController.POST_addProduct);
+router.post("/add/product", AdminController.POST_addProduct);
 router.post("/delete/users", AdminController.POST_deleteUsers);
 router.post("/delete/brands", AdminController.POST_deleteBrands);
 
