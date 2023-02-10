@@ -37,6 +37,17 @@ module.exports.GET_getColors = async (req, res) => {
   }
 };
 
+module.exports.GET_getSizes = async (req, res) => {
+  try {
+    logger.info("inside GET_getSizes");
+    const closetBao = new ClosetBao();
+    const result = await closetBao.getSizes();
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 module.exports.POST_addToCloset = async (req, res) => {
   try {
     logger.info("inside POST_addToCloset");

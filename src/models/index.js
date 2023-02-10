@@ -5,6 +5,7 @@ const Brands = require("./brands.schema");
 const Closet = require("./closet.schema");
 const Outfit = require("./outfits.schema");
 const Colors = require("./colors.schema");
+const Sizes = require("./sizes.schema");
 const AdminUser = require("./admin.user.schema");
 const Products = require("./products.schema");
 
@@ -16,6 +17,7 @@ module.exports = {
   Closet,
   Outfit,
   Colors,
+  Sizes,
   AdminUser,
   Products,
 };

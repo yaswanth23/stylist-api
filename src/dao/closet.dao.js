@@ -1,4 +1,4 @@
-const { Categories, Brands, Colors, Closet } = require("../models");
+const { Categories, Brands, Colors, Closet, Sizes } = require("../models");
 const logger = require("../common/logger")("closet-dao");
 
 module.exports.getCategories = async () => {
@@ -24,6 +24,16 @@ module.exports.getBrands = async () => {
 module.exports.getColors = async () => {
   try {
     const data = await Colors.find({});
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
+module.exports.getSizes = async () => {
+  try {
+    const data = await Sizes.find({});
     return data;
   } catch (e) {
     logger.error(e);

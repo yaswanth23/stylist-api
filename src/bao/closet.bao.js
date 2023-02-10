@@ -53,6 +53,21 @@ class ClosetBao extends Base {
     }
   }
 
+  async getSizes() {
+    try {
+      logger.info("inside getSizes");
+      let result = await ClosetDao.getSizes();
+      return {
+        statusCode: constants.STATUS_CODES[200],
+        statusMessage: constants.STATUS_MESSAGE[200],
+        data: result,
+      };
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   async addToCloset(closetData) {
     try {
       logger.info("inside addToCloset");
