@@ -870,6 +870,28 @@ class AdminBao extends Base {
     }
   }
 
+  async getproductDetails(productId) {
+    try {
+      logger.info("inside getproductDetails", productId);
+      let productDetails = await ProductsDao.findProduct(productId);
+      if (productDetails.length > 0) {
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          productDetails: productDetails[0],
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "product id not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   async publishProduct(brandId) {
     try {
       logger.info("inside publishProduct", brandId);
@@ -877,11 +899,11 @@ class AdminBao extends Base {
       if (findBrandUserId.length > 0) {
         // let productDetails = await ProductsDao.findProduct(productId);
         // if (productDetails.length > 0) {
-          await ProductsDao.updateProductStatus(brandId);
-          return {
-            statusCode: constants.STATUS_CODES[200],
-            statusMessage: "Products published successfully",
-          };
+        await ProductsDao.updateProductStatus(brandId);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: "Products published successfully",
+        };
         // } else {
         //   return {
         //     statusCode: constants.STATUS_CODES[302],
