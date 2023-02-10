@@ -54,16 +54,16 @@ module.exports.findProduct = async (productId) => {
   }
 };
 
-module.exports.updateProductStatus = async (productId) => {
+module.exports.updateProductStatus = async (brandId) => {
   try {
-    let whereObj = { _id: productId };
+    let whereObj = { brandId: brandId };
     let updateObj = {
       $set: {
         productStatus: "published",
         updatedOn: new Date().toISOString(),
       },
     };
-    const data = await Products.updateOne(whereObj, updateObj);
+    const data = await Products.updateMany(whereObj, updateObj);
     return data;
   } catch (e) {
     logger.error(e);

@@ -340,13 +340,13 @@ module.exports.POST_publishProduct = async (req, res) => {
     logger.info("inside POST_publishProduct");
     const schemaVerifyData = Joi.object().keys({
       brandId: Joi.string().required(),
-      productId: Joi.string().required(),
+      // productId: Joi.string().required(),
     });
     let params = await validateSchema(req.body, schemaVerifyData);
     const adminBao = new AdminBao();
     const result = await adminBao.publishProduct(
       params.brandId,
-      params.productId
+      // params.productId
     );
     logger.info("success");
     return _200(res, result);

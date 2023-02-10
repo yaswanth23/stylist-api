@@ -870,24 +870,24 @@ class AdminBao extends Base {
     }
   }
 
-  async publishProduct(brandId, productId) {
+  async publishProduct(brandId) {
     try {
       logger.info("inside publishProduct", brandId);
       let findBrandUserId = await AdminDao.findBrandUserId(brandId);
       if (findBrandUserId.length > 0) {
-        let productDetails = await ProductsDao.findProduct(productId);
-        if (productDetails.length > 0) {
-          await ProductsDao.updateProductStatus(productId);
+        // let productDetails = await ProductsDao.findProduct(productId);
+        // if (productDetails.length > 0) {
+          await ProductsDao.updateProductStatus(brandId);
           return {
             statusCode: constants.STATUS_CODES[200],
-            statusMessage: "Product published successfully",
+            statusMessage: "Products published successfully",
           };
-        } else {
-          return {
-            statusCode: constants.STATUS_CODES[302],
-            statusMessage: "product id not found",
-          };
-        }
+        // } else {
+        //   return {
+        //     statusCode: constants.STATUS_CODES[302],
+        //     statusMessage: "product id not found",
+        //   };
+        // }
       } else {
         return {
           statusCode: constants.STATUS_CODES[302],
