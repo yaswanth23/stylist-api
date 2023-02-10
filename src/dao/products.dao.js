@@ -32,6 +32,16 @@ module.exports.getProductDetails = async (brandId) => {
   }
 };
 
+module.exports.getAllProductDetails = async () => {
+  try {
+    const data = await Products.find({});
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
 module.exports.findProduct = async (productId) => {
   try {
     const data = await Products.find({

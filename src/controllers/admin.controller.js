@@ -317,6 +317,24 @@ module.exports.GET_getBrandProducts = async (req, res) => {
   }
 };
 
+module.exports.GET_getAllProducts = async (req, res) => {
+  try {
+    logger.info("inside GET_getAllProducts");
+    const schemaVerifyData = Joi.object().keys({
+      adminUserId: Joi.string().required(),
+      page: Joi.number().optional(),
+      limit: Joi.number().optional(),
+    });
+    let params = await validateSchema(req.query, schemaVerifyData);
+    const adminBao = new AdminBao();
+    const result = await adminBao.getAllProducts(params.adminUserId);
+    logger.info("success");
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 module.exports.POST_publishProduct = async (req, res) => {
   try {
     logger.info("inside POST_publishProduct");

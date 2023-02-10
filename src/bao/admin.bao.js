@@ -825,6 +825,51 @@ class AdminBao extends Base {
     }
   }
 
+  async getAllProducts(adminUserId) {
+    try {
+      logger.info("inside getAllProducts", adminUserId);
+      let findBrandUserId = await AdminDao.findAdminUserId(adminUserId);
+      if (findBrandUserId.length > 0) {
+        let productsList = await ProductsDao.getAllProductDetails();
+        let productDetails = [];
+        for (const val of productsList) {
+          let findBrandUserId = await AdminDao.findBrandUserId(val.brandId);
+          let finalObj = {
+            productId: val._id,
+            brandId: val.brandId,
+            brandName: findBrandUserId[0].emailId,
+            productName: val.productName,
+            productPrice: val.productPrice,
+            productDescription: val.productDescription,
+            productColor: val.productColor,
+            imageUrls: val.imageUrls,
+            productCategory: val.productCategory,
+            seasons: val.seasons,
+            productSizes: val.productSizes,
+            productButtonLink: val.productButtonLink,
+            productStatus: val.productStatus,
+            createdOn: val.createdOn,
+            updatedOn: val.updatedOn,
+          };
+          productDetails.push(finalObj);
+        }
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          productDetails,
+        };
+      } else {
+        return {
+          statusCode: constants.STATUS_CODES[302],
+          statusMessage: "admin user not found",
+        };
+      }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
   async publishProduct(brandId, productId) {
     try {
       logger.info("inside publishProduct", brandId);
