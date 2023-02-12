@@ -3,6 +3,7 @@ const logger = require("../common/logger")("closet-bao");
 const constants = require("../common/constants");
 const { ClosetDao, UserDao, OutfitDao } = require("../dao");
 const { S3Service } = require("../services");
+const cache = require("memory-cache");
 class ClosetBao extends Base {
   constructor() {
     super();
@@ -11,12 +12,23 @@ class ClosetBao extends Base {
   async getCategories() {
     try {
       logger.info("inside getCategories");
-      let result = await ClosetDao.getCategories();
-      return {
-        statusCode: constants.STATUS_CODES[200],
-        statusMessage: constants.STATUS_MESSAGE[200],
-        data: result,
-      };
+      let cacheKey = "categories";
+      let cachedData = cache.get(cacheKey);
+      if (cachedData) {
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: cachedData,
+        };
+      } else {
+        let result = await ClosetDao.getCategories();
+        cache.put(cacheKey, result, 24 * 60 * 60 * 1000);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: result,
+        };
+      }
     } catch (e) {
       logger.error(e);
       throw e;
@@ -26,12 +38,23 @@ class ClosetBao extends Base {
   async getBrands() {
     try {
       logger.info("inside getBrands");
-      let result = await ClosetDao.getBrands();
-      return {
-        statusCode: constants.STATUS_CODES[200],
-        statusMessage: constants.STATUS_MESSAGE[200],
-        data: result,
-      };
+      let cacheKey = "brands";
+      let cachedData = cache.get(cacheKey);
+      if (cachedData) {
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: cachedData,
+        };
+      } else {
+        let result = await ClosetDao.getBrands();
+        cache.put(cacheKey, result, 24 * 60 * 60 * 1000);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: result,
+        };
+      }
     } catch (e) {
       logger.error(e);
       throw e;
@@ -41,12 +64,23 @@ class ClosetBao extends Base {
   async getColors() {
     try {
       logger.info("inside getColors");
-      let result = await ClosetDao.getColors();
-      return {
-        statusCode: constants.STATUS_CODES[200],
-        statusMessage: constants.STATUS_MESSAGE[200],
-        data: result,
-      };
+      let cacheKey = "colors";
+      let cachedData = cache.get(cacheKey);
+      if (cachedData) {
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: cachedData,
+        };
+      } else {
+        let result = await ClosetDao.getColors();
+        cache.put(cacheKey, result, 24 * 60 * 60 * 1000);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: result,
+        };
+      }
     } catch (e) {
       logger.error(e);
       throw e;
@@ -56,12 +90,23 @@ class ClosetBao extends Base {
   async getSizes() {
     try {
       logger.info("inside getSizes");
-      let result = await ClosetDao.getSizes();
-      return {
-        statusCode: constants.STATUS_CODES[200],
-        statusMessage: constants.STATUS_MESSAGE[200],
-        data: result,
-      };
+      let cacheKey = "sizes";
+      let cachedData = cache.get(cacheKey);
+      if (cachedData) {
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: cachedData,
+        };
+      } else {
+        let result = await ClosetDao.getSizes();
+        cache.put(cacheKey, result, 24 * 60 * 60 * 1000);
+        return {
+          statusCode: constants.STATUS_CODES[200],
+          statusMessage: constants.STATUS_MESSAGE[200],
+          data: result,
+        };
+      }
     } catch (e) {
       logger.error(e);
       throw e;
