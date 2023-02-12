@@ -113,7 +113,7 @@ class HomeBao extends Base {
     }
   }
 
-  async getproductDetails(productId) {
+  async getProductDetails(productId) {
     try {
       logger.info("inside getproductDetails", productId);
       let productDetails = await ProductsDao.findProduct(productId);
