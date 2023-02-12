@@ -10,6 +10,7 @@ const picsRouter = require("./pics.router");
 const closetRouter = require("./closet.router");
 const outfitRouter = require("./outfit.router");
 const adminRouter = require("./admin.router");
+const homeRouter = require("./home.router");
 
 const init = (app) => {
   app.use("/api", defaultRouter);
@@ -19,6 +20,7 @@ const init = (app) => {
   app.use("/api", closetRouter);
   app.use("/api", outfitRouter);
   app.use("/api/admin", adminRouter);
+  app.use("/api", homeRouter);
 };
 
 module.exports = init;

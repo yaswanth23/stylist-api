@@ -6,6 +6,7 @@ const PicsController = require("./pics.controller");
 const ClosetController = require("./closet.controller");
 const OutfitController = require("./outfit.controller");
 const AdminController = require("./admin.controller");
+const HomeController = require("./home.controller");
 
 module.exports = {
   PingController,
@@ -16,4 +17,5 @@ module.exports = {
   ClosetController,
   OutfitController,
   AdminController,
+  HomeController,
 };

@@ -42,6 +42,18 @@ module.exports.getAllProductDetails = async () => {
   }
 };
 
+module.exports.getAllProductData = async (page, limit) => {
+  try {
+    const data = await Products.find({ productStatus: "published" })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
 module.exports.findProduct = async (productId) => {
   try {
     const data = await Products.find({
