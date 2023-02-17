@@ -3,11 +3,12 @@ const { v4: uuidv4 } = require("uuid");
 const nodemailer = require("nodemailer");
 const { auth } = require("google-auth-library");
 const jwt = require("jsonwebtoken");
+const moment = require("moment-timezone");
 const jwksClient = require("jwks-rsa");
 const logger = require("../common/logger")("auth-bao");
 const client = auth.fromAPIKey(process.env.GOOGLE_SIGN_IN_CLIENT_ID);
 const constants = require("../common/constants");
-const { UserDao, OtpDao, ClosetDao } = require("../dao");
+const { UserDao, OtpDao, ClosetDao, AdminDao } = require("../dao");
 
 const appleClient = jwksClient({
   jwksUri: "https://appleid.apple.com/auth/keys",
@@ -33,9 +34,10 @@ class AuthBao extends Base {
           return {
             statusCode: constants.STATUS_CODES[200],
             statusMessage: "OTP sent successfully",
-            userid: findEmailId[0].userId,
+            userId: findEmailId[0].userId,
             emailId: findEmailId[0].emailId,
             isProfileCreated,
+            isPreferences: findEmailId[0].isPreferences,
             status: 1,
           };
         } else {
@@ -52,6 +54,7 @@ class AuthBao extends Base {
           userId,
           emailId,
           isProfileCreated,
+          isPreferences: false,
           createdOn: new Date().toISOString(),
           updatedOn: new Date().toISOString(),
         };
@@ -63,6 +66,7 @@ class AuthBao extends Base {
             userId,
             emailId,
             isProfileCreated,
+            isPreferences,
             status: 1,
           };
         } else {
@@ -160,6 +164,7 @@ class AuthBao extends Base {
               ? null
               : findEmailId[0].profilePicUrl,
           isProfileCreated: findEmailId[0].isProfileCreated,
+          isPreferences: findEmailId[0].isPreferences,
         };
       } else {
         let userId = -1;
@@ -173,6 +178,7 @@ class AuthBao extends Base {
           gender: null,
           profilePicUrl: user.picture,
           isProfileCreated: false,
+          isPreferences: false,
           createdOn: new Date().toISOString(),
           updatedOn: new Date().toISOString(),
         };
@@ -192,6 +198,7 @@ class AuthBao extends Base {
               ? null
               : userDetails.profilePicUrl,
           isProfileCreated: userDetails.isProfileCreated,
+          isPreferences: userDetails.isPreferences,
         };
       }
     } catch (e) {
@@ -220,6 +227,7 @@ class AuthBao extends Base {
               ? null
               : userDetails[0].profilePicUrl,
           isProfileCreated: userDetails[0].isProfileCreated,
+          isPreferences: userDetails[0].isPreferences,
         };
       }
 
@@ -254,6 +262,7 @@ class AuthBao extends Base {
               ? null
               : userDetails[0].profilePicUrl,
           isProfileCreated: userDetails[0].isProfileCreated,
+          isPreferences: userDetails[0].isPreferences,
         };
       } else {
         return {
@@ -295,6 +304,7 @@ class AuthBao extends Base {
                   ? null
                   : findEmailId[0].profilePicUrl,
               isProfileCreated: findEmailId[0].isProfileCreated,
+              isPreferences: findEmailId[0].isPreferences,
             };
           } else {
             let userId = -1;
@@ -308,6 +318,7 @@ class AuthBao extends Base {
               gender: null,
               profilePicUrl: null,
               isProfileCreated: false,
+              isPreferences: false,
               createdOn: new Date().toISOString(),
               updatedOn: new Date().toISOString(),
             };
@@ -327,6 +338,7 @@ class AuthBao extends Base {
                   ? null
                   : userDetails.profilePicUrl,
               isProfileCreated: userDetails.isProfileCreated,
+              isPreferences: userDetails.isPreferences,
             };
           }
         } else {
@@ -375,6 +387,28 @@ class AuthBao extends Base {
       return userId;
     } else {
       return null;
+    }
+  }
+
+  async trackLastActive(userId) {
+    try {
+      logger.info("inside trackLastActive");
+      const utcNow = moment.utc();
+      let updateObj = {
+        lastActive: utcNow,
+      };
+      await UserDao.updateUserLastActive(userId, updateObj);
+      let whereObj = {
+        _id: userId,
+      };
+      await AdminDao.updateUserLastActive(whereObj, updateObj);
+      return {
+        statusCode: constants.STATUS_CODES[200],
+        statusMessage: constants.STATUS_MESSAGE[200],
+      };
+    } catch (e) {
+      logger.error(e);
+      throw e;
     }
   }
 }

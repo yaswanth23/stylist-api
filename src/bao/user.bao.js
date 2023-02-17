@@ -27,6 +27,7 @@ class UserBao extends Base {
               ? null
               : userDetails[0].profilePicUrl,
           isProfileCreated: userDetails[0].isProfileCreated,
+          isPreferences: userDetails[0].isPreferences,
         };
       } else {
         res = {

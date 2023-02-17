@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const logger = require("../common/logger")("admin-bao");
 const constants = require("../common/constants");
 const nodemailer = require("nodemailer");
+const moment = require("moment-timezone");
 const { CryptoService } = require("../services");
 const {
   AdminDao,
@@ -249,16 +250,20 @@ class AdminBao extends Base {
       if (findEmailId.length > 0) {
         if (findEmailId[0].role === "admin") {
           let usersList = await UserDao.getAllUsers(page, limit);
-          const filteredUsers = usersList.map((user) => ({
-            userId: user.userId,
-            emailId: user.emailId,
-            name: user?.name,
-            gender: user?.gender,
-            profilePicUrl: user?.profilePicUrl,
-            isProfileCreated: user.isProfileCreated,
-            createdOn: user.createdOn,
-            updatedOn: user.updatedOn,
-          }));
+          const filteredUsers = await Promise.all(
+            usersList.map(async (user) => ({
+              userId: user.userId,
+              emailId: user.emailId,
+              name: user?.name,
+              gender: user?.gender,
+              profilePicUrl: user?.profilePicUrl,
+              isProfileCreated: user.isProfileCreated,
+              isPreferences: user.isPreferences,
+              lastActive: await this.calculateActiveStatus(user.lastActive),
+              createdOn: user.createdOn,
+              updatedOn: user.updatedOn,
+            }))
+          );
           return { total: filteredUsers.length, filteredUsers };
         } else {
           return {
@@ -1023,6 +1028,35 @@ class AdminBao extends Base {
     } else {
       return null;
     }
+  }
+
+  async calculateActiveStatus(lastActiveTime) {
+    const lastActive = moment(lastActiveTime);
+    const utcNow = moment.utc();
+    const diffSeconds = utcNow.diff(lastActive, "seconds");
+
+    let displayString = "";
+    if (diffSeconds < 60) {
+      displayString = "active " + diffSeconds + " seconds ago";
+    } else if (diffSeconds < 3600) {
+      const diffMinutes = Math.floor(diffSeconds / 60);
+      displayString =
+        "active " +
+        diffMinutes +
+        " minute" +
+        (diffMinutes > 1 ? "s" : "") +
+        " ago";
+    } else if (diffSeconds < 86400) {
+      const diffHours = Math.floor(diffSeconds / 3600);
+      displayString =
+        "active " + diffHours + " hour" + (diffHours > 1 ? "s" : "") + " ago";
+    } else {
+      const diffDays = Math.floor(diffSeconds / 86400);
+      displayString =
+        "active " + diffDays + " day" + (diffDays > 1 ? "s" : "") + " ago";
+    }
+
+    return displayString;
   }
 }
 

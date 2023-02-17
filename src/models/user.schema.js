@@ -7,6 +7,8 @@ const schema = new mongoose.Schema({
   gender: String,
   profilePicUrl: String,
   isProfileCreated: Boolean,
+  isPreferences: Boolean,
+  lastActive: Date,
   createdOn: Date,
   updatedOn: Date,
 });

@@ -96,3 +96,13 @@ module.exports.deleteBrandAccount = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.updateUserLastActive = async (whereObj, updateObj) => {
+  try {
+    const data = await AdminUser.updateMany({}, updateObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

@@ -110,6 +110,22 @@ module.exports.GET_verifyUser = async (req, res) => {
   }
 };
 
+module.exports.POST_trackLastActive = async (req, res) => {
+  try {
+    logger.info("inside POST_trackLastActive");
+    const schemaVerifyDetails = Joi.object().keys({
+      userId: Joi.string().required(),
+    });
+    let params = await validateSchema(req.body, schemaVerifyDetails);
+    const authBao = new AuthBao();
+    const result = await authBao.trackLastActive(params.userId);
+    logger.info("result", result);
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,

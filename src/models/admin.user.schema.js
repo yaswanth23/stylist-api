@@ -8,6 +8,7 @@ const schema = new mongoose.Schema({
   encryptedData: String,
   isActive: Boolean,
   role: String,
+  lastActive: Date,
   createdOn: Date,
   updatedOn: Date,
 });

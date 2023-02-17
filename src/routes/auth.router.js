@@ -17,5 +17,6 @@ router.get("/privacy_policy", function (req, res) {
   res.sendFile(path.join(__dirname + "/privacyPolicy.html"));
 });
 router.get("/verifyUser", AuthController.GET_verifyUser);
+router.post("/user/track/lastActive", AuthController.POST_trackLastActive);
 
 module.exports = router;

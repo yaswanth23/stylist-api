@@ -111,3 +111,14 @@ module.exports.getAllUsers = async (page, limit) => {
     throw e;
   }
 };
+
+module.exports.updateUserLastActive = async (userId, updateObj) => {
+  try {
+    let whereObj = { userId };
+    const data = await User.updateMany(whereObj, updateObj);
+    return data;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
