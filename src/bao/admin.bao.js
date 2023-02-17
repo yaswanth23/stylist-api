@@ -278,7 +278,7 @@ class AdminBao extends Base {
     }
   }
 
-  async addBrandUser(adminEmailId, brandEmailId) {
+  async addBrandUser(adminEmailId, brandEmailId, brandName) {
     try {
       logger.info("inside addBrandUser", adminEmailId);
       const emailRegex =
@@ -358,6 +358,7 @@ class AdminBao extends Base {
 
             let insertObj = {
               emailId: brandEmailId,
+              name: brandName,
               saltKey: passkeyDetail.saltKey,
               saltKeyIv: passkeyDetail.saltKeyIv,
               encryptedData: passkeyDetail.encryptedData,
@@ -374,6 +375,7 @@ class AdminBao extends Base {
               statusMessage: "Invitation Mail Sent successfully!",
               userId: userData._id,
               emailId: userData.emailId,
+              brandName: userData.name,
               isActive: userData.isActive,
               role: userData.role,
               createdOn: userData.createdOn,
@@ -422,6 +424,7 @@ class AdminBao extends Base {
             return {
               brandId: brand._id,
               emailId: brand.emailId,
+              brandName: brand.name,
               isActive: brand.isActive,
               role: brand.role,
               productCount: productCount,

@@ -107,12 +107,14 @@ module.exports.POST_addBrandUser = async (req, res) => {
     const schemaCheckEmailId = Joi.object().keys({
       adminEmailId: Joi.string().required(),
       brandEmailId: Joi.string().required(),
+      brandName: Joi.string().required(),
     });
     let params = await validateSchema(req.body, schemaCheckEmailId);
     const adminBao = new AdminBao();
     const result = await adminBao.addBrandUser(
       params.adminEmailId.toLowerCase(),
-      params.brandEmailId.toLowerCase()
+      params.brandEmailId.toLowerCase(),
+      params.brandName
     );
     logger.info("result", result);
     return _200(res, result);
