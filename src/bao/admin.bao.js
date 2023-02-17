@@ -507,6 +507,8 @@ class AdminBao extends Base {
                       brandName: closetDetails[0].brandName,
                       season: closetDetails[0].season,
                       colorCode: closetDetails[0].colorCode,
+                      createdOn: closetDetails[0].createdOn,
+                      updatedOn: closetDetails[0].updatedOn,
                     };
                     closetDetailsList.push(obj);
                   })
@@ -542,6 +544,8 @@ class AdminBao extends Base {
               brandName: element.brandName,
               season: element.season,
               colorCode: element.colorCode,
+              createdOn: element.createdOn,
+              updatedOn: element.updatedOn,
             };
             data.push(obj);
           });
@@ -558,6 +562,8 @@ class AdminBao extends Base {
                 ? null
                 : userDetails[0].profilePicUrl,
             isProfileCreated: userDetails[0].isProfileCreated,
+            createdOn: userDetails[0].createdOn,
+            updatedOn: userDetails[0].updatedOn,
             outfitDetails: finalOutfitDetails,
             closetDetails: data,
           };
