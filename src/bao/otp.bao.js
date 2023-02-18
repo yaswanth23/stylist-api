@@ -59,6 +59,7 @@ class OtpBao extends Base {
           userId: userDetails[0].userId,
           emailId: userDetails[0].emailId,
           isProfileCreated: userDetails[0].isProfileCreated,
+          isPreferences: userDetails[0].isPreferences,
         };
       } else {
         const otpDetails = await OtpDao.findOtpDetails(emailId, otp, status);
@@ -88,6 +89,7 @@ class OtpBao extends Base {
             userId: userDetails[0].userId,
             emailId: userDetails[0].emailId,
             isProfileCreated: userDetails[0].isProfileCreated,
+            isPreferences: userDetails[0].isPreferences,
           };
         } else {
           return {

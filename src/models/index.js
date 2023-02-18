@@ -8,6 +8,7 @@ const Colors = require("./colors.schema");
 const Sizes = require("./sizes.schema");
 const AdminUser = require("./admin.user.schema");
 const Products = require("./products.schema");
+const QuestionPref = require("./question.pref.schema");
 
 module.exports = {
   Otp,
@@ -20,4 +21,5 @@ module.exports = {
   Sizes,
   AdminUser,
   Products,
+  QuestionPref,
 };

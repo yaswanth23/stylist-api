@@ -133,7 +133,7 @@ class HomeBao extends Base {
 
   async getProductDetails(productId) {
     try {
-      logger.info("inside getproductDetails", productId);
+      logger.info("inside getProductDetails", productId);
       let productDetails = await ProductsDao.findProduct(productId);
       if (productDetails.length > 0) {
         return {
@@ -162,6 +162,16 @@ class HomeBao extends Base {
           statusMessage: "product id not found",
         };
       }
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async getPreferences() {
+    try {
+      logger.info("inside getPreferences");
+      return "aa"
     } catch (e) {
       logger.error(e);
       throw e;

@@ -567,6 +567,7 @@ class AdminBao extends Base {
                 ? null
                 : userDetails[0].profilePicUrl,
             isProfileCreated: userDetails[0].isProfileCreated,
+            isPreferences: userDetails[0].isPreferences,
             createdOn: userDetails[0].createdOn,
             updatedOn: userDetails[0].updatedOn,
             outfitDetails: finalOutfitDetails,
@@ -614,6 +615,7 @@ class AdminBao extends Base {
         }
         let userId = -1;
         let isProfileCreated = false;
+        let isPreferences = false;
         do {
           userId = await this.generateUserId();
         } while (userId == null);
@@ -623,6 +625,7 @@ class AdminBao extends Base {
           name,
           gender,
           isProfileCreated,
+          isPreferences,
           createdOn: new Date().toISOString(),
           updatedOn: new Date().toISOString(),
         };
@@ -635,6 +638,7 @@ class AdminBao extends Base {
           name,
           gender,
           isProfileCreated,
+          isPreferences,
           createdOn: new Date().toISOString(),
           updatedOn: new Date().toISOString(),
         };

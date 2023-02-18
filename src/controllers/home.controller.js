@@ -44,6 +44,17 @@ module.exports.GET_productDetails = async (req, res) => {
   }
 };
 
+module.exports.GET_preferences = async (req, res) => {
+  try {
+    logger.info("inside GET_preferences");
+    const homeBao = new HomeBao();
+    const result = await homeBao.getPreferences();
+    return _200(res, result);
+  } catch (e) {
+    throw _sendGenericError(res, e);
+  }
+};
+
 function _sendGenericError(res, e) {
   return _error(res, {
     message: e,
