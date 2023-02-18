@@ -4,6 +4,12 @@ const logger = require("../common/logger")("closet-dao");
 module.exports.getCategories = async () => {
   try {
     const data = await Categories.find({});
+    data.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+    data.forEach((category) => {
+      category.subCategory.sort((a, b) =>
+        a.subCategoryName.localeCompare(b.subCategoryName)
+      );
+    });
     return data;
   } catch (e) {
     logger.error(e);
@@ -14,7 +20,7 @@ module.exports.getCategories = async () => {
 module.exports.getBrands = async () => {
   try {
     const data = await Brands.find({});
-    return data;
+    return data.sort((a, b) => a.brandName.localeCompare(b.brandName));
   } catch (e) {
     logger.error(e);
     throw e;
@@ -24,7 +30,7 @@ module.exports.getBrands = async () => {
 module.exports.getColors = async () => {
   try {
     const data = await Colors.find({});
-    return data;
+    return data.sort((a, b) => a.colorName.localeCompare(b.colorName));
   } catch (e) {
     logger.error(e);
     throw e;
