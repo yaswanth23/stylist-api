@@ -189,20 +189,20 @@ class HomeBao extends Base {
           (item) => item.categoryId === product.categoryId
         );
         if (existingCategory) {
-          existingCategory.subCategory.push({
-            subCategoryId: product.subCategoryId,
-            subCategoryName: product.subCategoryName,
-            subCategoryImage: product.imageUrls[0],
+          existingCategory.products.push({
+            productId: product._id,
+            productName: product.productName,
+            productImage: product.imageUrls[0],
           });
         } else {
           result.push({
             categoryId: product.categoryId,
             categoryName: product.categoryName,
-            subCategory: [
+            products: [
               {
-                subCategoryId: product.subCategoryId,
-                subCategoryName: product.subCategoryName,
-                subCategoryImage: product.imageUrls[0],
+                productId: product._id,
+                productName: product.productName,
+                productImage: product.imageUrls[0],
               },
             ],
           });
