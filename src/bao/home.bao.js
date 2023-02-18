@@ -25,7 +25,10 @@ class HomeBao extends Base {
           productDescription: val.productDescription,
           productColor: val.productColor,
           imageUrls: val.imageUrls,
-          productCategory: val.productCategory,
+          categoryId: val.categoryId,
+          categoryName: val.categoryName,
+          subCategoryId: val.subCategoryId,
+          subCategoryName: val.subCategoryName,
           seasons: val.seasons,
           productSizes: val.productSizes,
           productButtonLink: val.productButtonLink,
@@ -53,25 +56,38 @@ class HomeBao extends Base {
         }
       }
 
-      if (filters.category) {
-        let categories = JSON.parse(filters.category);
-        finalData = finalData.filter((data) =>
-          categories.includes(data.productCategory)
-        );
+      if (filters.categoryIds) {
+        let categories = JSON.parse(filters.categoryIds);
+        if (categories.length > 0) {
+          finalData = finalData.filter((data) =>
+            categories.includes(data.categoryId)
+          );
+        }
       }
 
-      //   if (filters.brand) {
-      //     let brands = JSON.parse(filters.brand);
-      //     finalData = finalData.filter((data) =>
-      //       categories.includes(data.productCategory)
-      //     );
+      if (filters.subCategoryIds) {
+        let subCategories = JSON.parse(filters.subCategoryIds);
+        if (subCategories.length > 0) {
+          finalData = finalData.filter((data) =>
+            subCategories.includes(data.subCategoryId)
+          );
+        }
+      }
+
+      // if (filters.brandIds) {
+      //   let brands = JSON.parse(filters.brandIds);
+      //   if (brands.length > 0) {
+      //     finalData = finalData.filter((data) => brands.includes(data.brandId));
       //   }
+      // }
 
       if (filters.season) {
         let seasonsList = JSON.parse(filters.season);
-        finalData = finalData.filter((data) =>
-          data.seasons.some((season) => seasonsList.includes(season))
-        );
+        if (seasonsList.length > 0) {
+          finalData = finalData.filter((data) =>
+            data.seasons.some((season) => seasonsList.includes(season))
+          );
+        }
       }
 
       if (filters.color) {
@@ -83,9 +99,11 @@ class HomeBao extends Base {
 
       if (filters.size) {
         let sizes = JSON.parse(filters.size);
-        finalData = finalData.filter((data) =>
-          data.productSizes.some((size) => sizes.includes(size))
-        );
+        if (sizes.length > 0) {
+          finalData = finalData.filter((data) =>
+            data.productSizes.some((size) => sizes.includes(size))
+          );
+        }
       }
 
       if (filters.price) {
@@ -128,7 +146,10 @@ class HomeBao extends Base {
             productDescription: productDetails[0].productDescription,
             productColor: productDetails[0].productColor,
             imageUrls: productDetails[0].imageUrls,
-            productCategory: productDetails[0].productCategory,
+            categoryId: productDetails[0].categoryId,
+            categoryName: productDetails[0].categoryName,
+            subCategoryId: productDetails[0].subCategoryId,
+            subCategoryName: productDetails[0].subCategoryName,
             seasons: productDetails[0].seasons,
             productSizes: productDetails[0].productSizes,
             productButtonLink: productDetails[0].productButtonLink,
