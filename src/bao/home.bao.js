@@ -1,7 +1,7 @@
 const Base = require("./base");
 const logger = require("../common/logger")("home-bao");
 const constants = require("../common/constants");
-const { ProductsDao } = require("../dao");
+const { ProductsDao, ClosetDao, UserDao } = require("../dao");
 
 class HomeBao extends Base {
   constructor() {
@@ -171,7 +171,8 @@ class HomeBao extends Base {
   async getPreferences() {
     try {
       logger.info("inside getPreferences");
-      return "aa";
+      let result = await UserDao.getQuestionPref();
+      return result;
     } catch (e) {
       logger.error(e);
       throw e;

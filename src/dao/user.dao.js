@@ -125,46 +125,6 @@ module.exports.updateUserLastActive = async (userId, updateObj) => {
 
 module.exports.getQuestionPref = async () => {
   try {
-    let obj = [
-      {
-        questionId: 1,
-        question: "What's your top 5 favourite brands?",
-        isBrand: true,
-      },
-      {
-        questionId: 2,
-        question: "What's your top 5 favourite denim brands?",
-        isBrand: true,
-      },
-      {
-        questionId: 3,
-        question: "What's your top 5 favourite shoe brands?",
-        isBrand: true,
-      },
-      {
-        questionId: 4,
-        question: "What's your top 5 favourite dress brands?",
-        isBrand: true,
-      },
-      {
-        questionId: 5,
-        question: "What's your top 5 favourite handbag brands?",
-        isBrand: true,
-      },
-
-      {
-        questionId: 6,
-        question: "What's are your top 3 favorite colors to wear?",
-        isBrand: false,
-      },
-      {
-        questionId: 7,
-        question: "What's are your top 3 colors you do not like to wear?",
-        isBrand: false,
-      },
-    ];
-
-    await QuestionPref.insertMany(obj);
     const data = await QuestionPref.find({});
     return data;
   } catch (e) {
