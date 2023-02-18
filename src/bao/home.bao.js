@@ -171,7 +171,45 @@ class HomeBao extends Base {
   async getPreferences() {
     try {
       logger.info("inside getPreferences");
-      return "aa"
+      return "aa";
+    } catch (e) {
+      logger.error(e);
+      throw e;
+    }
+  }
+
+  async getHomePageData() {
+    try {
+      logger.info("inside getHomePageData");
+      let productDetails = await ProductsDao.getAllProductData(1, 10);
+
+      const transformedArray = productDetails.reduce((result, product) => {
+        const existingCategory = result.find(
+          (item) => item.categoryId === product.categoryId
+        );
+        if (existingCategory) {
+          existingCategory.subCategory.push({
+            subCategoryId: product.subCategoryId,
+            subCategoryName: product.subCategoryName,
+            subCategoryImage: product.imageUrls[0],
+          });
+        } else {
+          result.push({
+            categoryId: product.categoryId,
+            categoryName: product.categoryName,
+            subCategory: [
+              {
+                subCategoryId: product.subCategoryId,
+                subCategoryName: product.subCategoryName,
+                subCategoryImage: product.imageUrls[0],
+              },
+            ],
+          });
+        }
+        return result;
+      }, []);
+
+      return transformedArray;
     } catch (e) {
       logger.error(e);
       throw e;
