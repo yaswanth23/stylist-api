@@ -432,6 +432,7 @@ class AdminBao extends Base {
               brandName: brand.name,
               isActive: brand.isActive,
               role: brand.role,
+              lastActive: await this.calculateActiveStatus(brand.lastActive),
               productCount: productCount,
               createdOn: brand.createdOn,
               updatedOn: brand.updatedOn,
@@ -834,7 +835,11 @@ class AdminBao extends Base {
           statusCode: constants.STATUS_CODES[200],
           statusMessage: constants.STATUS_MESSAGE[200],
           brandId,
-          brandName: findBrandUserId[0].emailId,
+          emailId: findBrandUserId[0].emailId,
+          brandName: findBrandUserId[0].name,
+          isActive: findBrandUserId[0].isActive,
+          role: findBrandUserId[0].role,
+          productCount: productsList.length,
           productsList,
         };
       } else {
@@ -861,7 +866,8 @@ class AdminBao extends Base {
           let finalObj = {
             productId: val._id,
             brandId: val.brandId,
-            brandName: findBrandUserId[0].emailId,
+            emailId: findBrandUserId[0].emailId,
+            brandName: findBrandUserId[0].name,
             productName: val.productName,
             productPrice: val.productPrice,
             productDescription: val.productDescription,
