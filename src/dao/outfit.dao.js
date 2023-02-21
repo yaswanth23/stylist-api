@@ -72,3 +72,13 @@ module.exports.updateOutfitDetails = async (whereObj, updateObj) => {
     throw e;
   }
 };
+
+module.exports.getOutfitCount = async (userId) => {
+  try {
+    const count = await Outfit.countDocuments({ userId });
+    return count;
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};

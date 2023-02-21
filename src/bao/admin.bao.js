@@ -251,20 +251,31 @@ class AdminBao extends Base {
         if (findEmailId[0].role === "admin") {
           let usersList = await UserDao.getAllUsers(page, limit);
           const filteredUsers = await Promise.all(
-            usersList.map(async (user) => ({
-              userId: user.userId,
-              emailId: user.emailId,
-              name: user?.name,
-              gender: user?.gender,
-              profilePicUrl: user?.profilePicUrl,
-              isProfileCreated: user.isProfileCreated,
-              isPreferences: user.isPreferences,
-              lastActive: await this.calculateActiveStatus(user.lastActive),
-              createdOn: user.createdOn,
-              updatedOn: user.updatedOn,
-            }))
+            usersList.map(async (user) => {
+              const closetItemsCountByCategory =
+                await ClosetDao.getClosetItemsCount(user.userId);
+              console.log("--->", closetItemsCountByCategory);
+              return {
+                userId: user.userId,
+                emailId: user.emailId,
+                name: user?.name,
+                gender: user?.gender,
+                profilePicUrl: user?.profilePicUrl,
+                isProfileCreated: user.isProfileCreated,
+                isPreferences: user.isPreferences,
+                lastActive: await this.calculateActiveStatus(user.lastActive),
+                totalClosetItems: closetItemsCountByCategory.count,
+                categoryStats: closetItemsCountByCategory.categoryStats,
+                brandStats: closetItemsCountByCategory.brandStats,
+                seasonStats: closetItemsCountByCategory.seasonStats,
+                colorStats: closetItemsCountByCategory.colorStats,
+                totalOutfits: await OutfitDao.getOutfitCount(user.userId),
+                createdOn: user.createdOn,
+                updatedOn: user.updatedOn,
+              };
+            })
           );
-          return { total: filteredUsers.length, filteredUsers };
+          return { total: filteredUsers.length, userData: filteredUsers };
         } else {
           return {
             statusCode: constants.STATUS_CODES[318],

@@ -127,3 +127,160 @@ module.exports.findClosetDetails = async (whereObj) => {
     throw e;
   }
 };
+
+module.exports.getClosetItemsCount = async (userId) => {
+  try {
+    const count = await Closet.countDocuments({ userId });
+    const categoryStat = await Closet.aggregate([
+      { $match: { userId } },
+      { $group: { _id: "$categoryName", count: { $sum: 1 } } },
+    ]);
+    let categoryStats = categoryStat.map(({ _id, count }) => ({
+      [_id]: count,
+    }));
+
+    const brandStat = await Closet.aggregate([
+      { $match: { userId } },
+      { $group: { _id: "$brandName", count: { $sum: 1 } } },
+    ]);
+    let brandStats = brandStat.map(({ _id, count }) => ({
+      [_id]: count,
+    }));
+
+    const seasonStat = await Closet.aggregate([
+      { $match: { userId } },
+      { $unwind: "$season" },
+      { $group: { _id: "$season", count: { $sum: 1 } } },
+    ]);
+
+    let seasonStats = seasonStat.map(({ _id, count }) => ({
+      [_id]: count,
+    }));
+
+    const colorStat = await Closet.aggregate([
+      { $match: { userId } },
+      { $unwind: "$colorCode" },
+      { $group: { _id: "$colorCode", count: { $sum: 1 } } },
+    ]);
+
+    let colorStats = colorStat.map(({ _id, count }) => ({
+      [_id]: count,
+    }));
+
+    return {
+      count,
+      categoryStats: categoryStats,
+      brandStats: brandStats,
+      seasonStats: seasonStats,
+      colorStats: colorStats,
+    };
+  } catch (e) {
+    logger.error(e);
+    throw e;
+  }
+};
+
+// module.exports.getClosetItemsCount = async (userId) => {
+//   try {
+//     const pipeline = [
+//       { $match: { userId } },
+//       {
+//         $group: {
+//           _id: null,
+//           count: { $sum: 1 },
+//           categories: { $addToSet: "$categoryName" },
+//           brands: { $addToSet: "$brandName" },
+//           seasons: { $addToSet: "$season" },
+//           colors: { $addToSet: "$colorCode" }
+//         }
+//       },
+//       {
+//         $project: {
+//           _id: 0,
+//           count: 1,
+//           categoryStats: {
+//             $arrayToObject: {
+//               $map: {
+//                 input: "$categories",
+//                 in: {
+//                   k: "$$this",
+//                   v: {
+//                     $size: {
+//                       $filter: {
+//                         input: "$$ROOT",
+//                         as: "item",
+//                         cond: { $eq: [ "$$item.categoryName", "$$this" ] }
+//                       }
+//                     }
+//                   }
+//                 }
+//               }
+//             }
+//           },
+//           brandStats: {
+//             $arrayToObject: {
+//               $map: {
+//                 input: "$brands",
+//                 in: {
+//                   k: "$$this",
+//                   v: {
+//                     $size: {
+//                       $filter: {
+//                         input: "$$ROOT",
+//                         as: "item",
+//                         cond: { $eq: [ "$$item.brandName", "$$this" ] }
+//                       }
+//                     }
+//                   }
+//                 }
+//               }
+//             }
+//           },
+//           seasonStats: {
+//             $arrayToObject: {
+//               $map: {
+//                 input: "$seasons",
+//                 in: {
+//                   k: "$$this",
+//                   v: {
+//                     $size: {
+//                       $filter: {
+//                         input: "$$ROOT",
+//                         as: "item",
+//                         cond: { $in: [ "$$this", "$$item.season" ] }
+//                       }
+//                     }
+//                   }
+//                 }
+//               }
+//             }
+//           },
+//           colorStats: {
+//             $arrayToObject: {
+//               $map: {
+//                 input: "$colors",
+//                 in: {
+//                   k: "$$this",
+//                   v: {
+//                     $size: {
+//                       $filter: {
+//                         input: "$$ROOT",
+//                         as: "item",
+//                         cond: { $in: [ "$$this", "$$item.colorCode" ] }
+//                       }
+//                     }
+//                   }
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       }
+//     ];
+//     const [ result ] = await Closet.aggregate(pipeline);
+//     return result;
+//   } catch (e) {
+//     logger.error(e);
+//     throw e;
+//   }
+// };
