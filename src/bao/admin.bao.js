@@ -256,7 +256,7 @@ class AdminBao extends Base {
             usersList.map(async (user) => {
               const closetItemsCountByCategory =
                 await ClosetDao.getClosetItemsCount(user.userId);
-              console.log("--->", closetItemsCountByCategory);
+
               return {
                 userId: user.userId,
                 emailId: user.emailId,
@@ -568,6 +568,10 @@ class AdminBao extends Base {
             };
             data.push(obj);
           });
+
+          const closetItemsCountByCategory =
+            await ClosetDao.getClosetItemsCount(userId);
+
           res = {
             statusCode: constants.STATUS_CODES[200],
             statusMessage: constants.STATUS_MESSAGE[200],
@@ -582,6 +586,17 @@ class AdminBao extends Base {
                 : userDetails[0].profilePicUrl,
             isProfileCreated: userDetails[0].isProfileCreated,
             isPreferences: userDetails[0].isPreferences,
+            lastActive: await this.calculateActiveStatus(
+              userDetails[0].lastActive
+            ),
+            totalClosetItems: closetItemsCountByCategory.count,
+            categoryStats: closetItemsCountByCategory.categoryStats,
+            brandStats: closetItemsCountByCategory.brandStats,
+            seasonStats: closetItemsCountByCategory.seasonStats,
+            colorStats: closetItemsCountByCategory.colorStats,
+            totalOutfits: await OutfitDao.getOutfitCount(
+              userDetails[0].userId.userId
+            ),
             createdOn: userDetails[0].createdOn,
             updatedOn: userDetails[0].updatedOn,
             outfitDetails: finalOutfitDetails,
