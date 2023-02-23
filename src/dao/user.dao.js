@@ -92,8 +92,30 @@ module.exports.findUserInstaId = async (instaId) => {
 
 module.exports.getUserCount = async () => {
   try {
-    const count = await User.countDocuments({});
-    return count;
+    const result = await User.aggregate([
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
+          maleCount: {
+            $sum: {
+              $cond: { if: { $eq: ["$gender", "male"] }, then: 1, else: 0 },
+            },
+          },
+          femaleCount: {
+            $sum: {
+              $cond: { if: { $eq: ["$gender", "female"] }, then: 1, else: 0 },
+            },
+          },
+        },
+      },
+    ]);
+
+    return {
+      totalCount: result[0].count,
+      maleCount: result[0].maleCount,
+      femaleCount: result[0].femaleCount,
+    };
   } catch (e) {
     logger.error(e);
     throw e;

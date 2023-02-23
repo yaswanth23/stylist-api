@@ -206,13 +206,15 @@ class AdminBao extends Base {
       let findEmailId = await AdminDao.findEmailId(emailId);
       if (findEmailId.length > 0) {
         if (findEmailId[0].role === "admin") {
-          let appUserCount = await UserDao.getUserCount();
+          let appUserStats = await UserDao.getUserCount();
           let brandUserCount = await AdminDao.getBrandUserCount();
 
           return {
             statusCode: constants.STATUS_CODES[200],
             statusMessage: constants.STATUS_MESSAGE[200],
-            appUserCount,
+            appUserCount: appUserStats.totalCount,
+            appMaleUserCount: appUserStats.maleCount,
+            appFemaleUserCount: appUserStats.femaleCount,
             brandUserCount,
           };
         } else {
